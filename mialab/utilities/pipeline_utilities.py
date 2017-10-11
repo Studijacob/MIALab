@@ -198,7 +198,7 @@ def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
     # execute pipeline on T2 image
     img.images[structure.BrainImageTypes.T2] = pipeline_t2.execute(img.images[structure.BrainImageTypes.T2])
 
-    if kwargs.get('registration_pre', False):
+    if kwargs.get('registration_pre', True):
         # get transformation
         transform = pipeline_t1.filters[1].transform
 
