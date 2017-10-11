@@ -323,3 +323,6 @@ sitk.WriteImage(moving_image, 'test1.nii.gz')
 registration = MultiModalRegistration()  # specify parameters to your needs
 parameters = MultiModalRegistrationParams(fixed_image)
 registered_image = registration.execute(moving_image, parameters)
+
+
+#test 
