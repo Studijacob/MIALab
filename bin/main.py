@@ -13,7 +13,7 @@ import numpy as np
 from tensorflow.python.platform import app
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
-# fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
+# fixes the ModuleNotFoundError when executing mainRG.py in the console after code changes (e.g. git pull)
 # somehow pip install does not keep track of packages
 
 import mialab.classifier.decision_forest as df
@@ -75,24 +75,29 @@ def main(_):
     df_params.model_dir = model_dir
     forest = None
 
-    for batch_index in range(0, len(data_items), TRAIN_BATCH_SIZE):
-        # slicing manages out of range; no need to worry
-        batch_data = dict(data_items[batch_index: batch_index+TRAIN_BATCH_SIZE])
-        # load images for training and pre-process
-        images = putil.pre_process_batch(batch_data, pre_process_params, multi_process=True)
+    # for batch_index in range(0, len(data_items), TRAIN_BATCH_SIZE):
+    #     # slicing manages out of range; no need to worry
+    #     batch_data = dict(data_items[batch_index: batch_index+TRAIN_BATCH_SIZE])
+    #     # load images for training and pre-process
+    #     images = putil.pre_process_batch(batch_data, pre_process_params, multi_process=True)
+    #
+    #     # generate feature matrix and label vector
+    #     data_train = np.concatenate([img.feature_matrix[0] for img in images])
+    #     labels_train = np.concatenate([img.feature_matrix[1] for img in images])
+    #
+    #     if forest is None:
+    #         df_params.num_features = images[0].feature_matrix[0].shape[1]
+    #         print(df_params)
+    #         forest = df.DecisionForest(df_params)
+    #
+    #     start_time = timeit.default_timer()
+    #     forest.train(data_train, labels_train)
+    #     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
-        # generate feature matrix and label vector
-        data_train = np.concatenate([img.feature_matrix[0] for img in images])
-        labels_train = np.concatenate([img.feature_matrix[1] for img in images])
-
-        if forest is None:
-            df_params.num_features = images[0].feature_matrix[0].shape[1]
-            print(df_params)
-            forest = df.DecisionForest(df_params)
-
-        start_time = timeit.default_timer()
-        forest.train(data_train, labels_train)
-        print(' Time elapsed:', timeit.default_timer() - start_time, 's')
+    df_params.model_dir = "/Users/Luca/PycharmProjects/MIALabJacob/bin/mia-model/2017-10-03214518" #model_dir
+    df_params.num_features = 7  # put in the number of features you are using
+    forest = df.DecisionForest(df_params)
+    forest.load_estimator()
 
     print('-' * 5, 'Testing...')
     result_dir = os.path.join(FLAGS.result_dir, t)
