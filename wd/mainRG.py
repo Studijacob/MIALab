@@ -325,4 +325,4 @@ parameters = MultiModalRegistrationParams(fixed_image)
 registered_image = registration.execute(moving_image, parameters)
 
 
-#test 
+#test
