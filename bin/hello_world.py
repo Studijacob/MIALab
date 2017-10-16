@@ -16,7 +16,6 @@ from tensorflow.python.platform import app
 def main(_):
 
     print('Welcome to MIALab 2017!')
-    a = 1
 
     # --- TensorFlow
 
