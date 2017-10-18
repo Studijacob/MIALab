@@ -17,6 +17,7 @@ import SimpleITK as sitk
 
 import mialab.filtering.filter as fltr
 
+dimensions = 2
 
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
@@ -62,7 +63,7 @@ class MultiModalRegistration(fltr.IFilter):
     """
 
     def __init__(self,
-                 registration_type: RegistrationType=RegistrationType.RIGID,
+                 registration_type: RegistrationType=RegistrationType.AFFINE, #RegistrationType.RIGID,
                  number_of_histogram_bins: int=200,
                  learning_rate: float=1.0,
                  step_size: float=0.001,
@@ -157,7 +158,7 @@ class MultiModalRegistration(fltr.IFilter):
         if self.registration_type == RegistrationType.RIGID:
             transform_type = sitk.VersorRigid3DTransform()
         elif self.registration_type == RegistrationType.AFFINE:
-            transform_type = sitk.AffineTransform(3)
+            transform_type = sitk.AffineTransform(dimensions)
         else:
             raise ValueError('not supported registration_type')
 
@@ -272,7 +273,7 @@ class RegistrationPlotter:
         # with the default - the relevant method is canvas_tostring_rgb())
         plt.gcf().canvas.draw()
         plot_data = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
-        plot_data = plot_data.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+        plot_data = plot_data.reshape(plt.gcf().canvas.get_width_height()[::-1] + (dimensions,))
         plot_image = sitk.GetImageFromArray(plot_data, isVector=True)
 
         # Extract the central axial slice from the two volumes, compose it using the transformation and alpha blend it
@@ -315,14 +316,23 @@ class RegistrationPlotter:
         combined_image = sitk.Paste(combined_image, image2, image2.GetSize(), (0, 0), image2_destination)
         sitk.WriteImage(combined_image, file_name)
 
+d3D = False
+d2D = True
 
-#Testing
-fixed_image = sitk.ReadImage('./test/100307/T1mni.nii.gz')
-moving_image = sitk.ReadImage('./test/100307/T2mni.nii.gz')
-sitk.WriteImage(moving_image, 'test1.nii.gz')
-registration = MultiModalRegistration()  # specify parameters to your needs
-parameters = MultiModalRegistrationParams(fixed_image)
-registered_image = registration.execute(moving_image, parameters)
-sitk.WriteImage(registered_image, 'myRegistred.nii.gz')
+if(d3D):
+    #Testing 3D
+    fixed_image = sitk.ReadImage('./test/100307/T1mni.nii.gz')
+    moving_image = sitk.ReadImage('./test/100307/T2mni.nii.gz')
+    registration = MultiModalRegistration()  # specify parameters to your needs
+    parameters = MultiModalRegistrationParams(fixed_image)
+    registered_image = registration.execute(moving_image, parameters)
+    sitk.WriteImage(registered_image, 'myRegistred.nii.gz')
 
-#test
+elif(d2D):
+    #testing 2D
+    fixed_image = sitk.ReadImage('./DummyImages/RegistrationA.jpg')
+    moving_image = sitk.ReadImage('./DummyImages/RegistrationB.jpg')
+    registration = MultiModalRegistration()  # specify parameters to your needs
+    parameters = MultiModalRegistrationParams(fixed_image)
+    registered_image = registration.execute(moving_image, parameters)
+    sitk.WriteImage(registered_image, 'DummyRegistred.jpg')

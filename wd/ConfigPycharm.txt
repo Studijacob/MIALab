@@ -1,1 +1,2 @@
 ./test/100307/T1mni.nii.gz ./test/188347/T1mni.nii.gz resultTransformation.txt
+./DummyImages/RegistrationA.jpg  ./DummyImages/RegistrationB.jpg resultTransformation.txt
