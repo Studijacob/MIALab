@@ -318,11 +318,11 @@ class RegistrationPlotter:
 
 #Testing
 fixed_image = sitk.ReadImage('./test/100307/T1mni.nii.gz')
-moving_image = sitk.ReadImage('./test/188347/T1mni.nii.gz')
+moving_image = sitk.ReadImage('./test/100307/T2mni.nii.gz')
 sitk.WriteImage(moving_image, 'test1.nii.gz')
 registration = MultiModalRegistration()  # specify parameters to your needs
 parameters = MultiModalRegistrationParams(fixed_image)
 registered_image = registration.execute(moving_image, parameters)
-
+sitk.WriteImage(registered_image, 'myRegistred.nii.gz')
 
 #test
