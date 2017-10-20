@@ -17,8 +17,6 @@ import SimpleITK as sitk
 
 import mialab.filtering.filter as fltr
 
-dimensions = 2
-
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
     AFFINE = 1
@@ -316,11 +314,11 @@ class RegistrationPlotter:
         combined_image = sitk.Paste(combined_image, image2, image2.GetSize(), (0, 0), image2_destination)
         sitk.WriteImage(combined_image, file_name)
 
-d3D = False
-d2D = True
+d3D = True
 
 if(d3D):
     #Testing 3D
+    dimensions = 3
     fixed_image = sitk.ReadImage('./test/100307/T1mni.nii.gz')
     moving_image = sitk.ReadImage('./test/100307/T2mni.nii.gz')
     registration = MultiModalRegistration()  # specify parameters to your needs
@@ -328,8 +326,9 @@ if(d3D):
     registered_image = registration.execute(moving_image, parameters)
     sitk.WriteImage(registered_image, 'myRegistred.nii.gz')
 
-elif(d2D):
+else:
     #testing 2D
+    dimensions = 2
     fixed_image = sitk.ReadImage('./DummyImages/RegistrationA.jpg')
     moving_image = sitk.ReadImage('./DummyImages/RegistrationB.jpg')
     registration = MultiModalRegistration()  # specify parameters to your needs
