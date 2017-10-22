@@ -14,15 +14,18 @@ def command_iteration(method) :
 
 
 def RSGD():
+    outputFile = 'RSGD.txt'
+    # outputFile = 'RSGD.nii.gz'
     R = sitk.ImageRegistrationMethod()
     R.SetMetricAsMeanSquares()
     R.SetOptimizerAsRegularStepGradientDescent(4.0, .01, 200)
     R.SetInitialTransform(sitk.TranslationTransform(fixed.GetDimension()))
     R.SetInterpolator(sitk.sitkLinear)
-    return R
+    return outputFile, R
 
 
 def GDLS(fixed, moving):
+    outputFile = 'GDLS.txt'
     fixed = sitk.Normalize(fixed)
     fixed = sitk.DiscreteGaussian(fixed, 2.0)
     moving = sitk.Normalize(moving)
@@ -35,10 +38,11 @@ def GDLS(fixed, moving):
                                               convergenceWindowSize=5)
     R.SetInitialTransform(sitk.TranslationTransform(fixed.GetDimension()))
     R.SetInterpolator(sitk.sitkLinear)
-    return fixed, moving, R
+    return outputFile, fixed, moving, R
 
 
-def corr_RSGD():
+def corr_RSGD(fixed, moving):
+    outputFile = 'corr_RSGD.txt'
     R = sitk.ImageRegistrationMethod()
     R.SetMetricAsCorrelation()
     R.SetOptimizerAsRegularStepGradientDescent(learningRate=2.0,
@@ -46,13 +50,14 @@ def corr_RSGD():
                                                numberOfIterations=500,
                                                gradientMagnitudeTolerance=1e-8)
     R.SetOptimizerScalesFromIndexShift()
-    tx = sitk.CenteredTransformInitializer(fixed, moving, sitk.Similarity2DTransform())
+    tx = sitk.CenteredTransformInitializer(fixed, moving, sitk.Similarity3DTransform())
     R.SetInitialTransform(tx)
     R.SetInterpolator(sitk.sitkLinear)
-    return R
+    return outputFile, R
 
 
 def MMI_RSGD():
+    outputFile = 'MMI_RSGD.txt'
     numberOfBins = 24
     samplingPercentage = 0.10
     R = sitk.ImageRegistrationMethod()
@@ -62,17 +67,18 @@ def MMI_RSGD():
     R.SetOptimizerAsRegularStepGradientDescent(1.0, .001, 200)
     R.SetInitialTransform(sitk.TranslationTransform(fixed.GetDimension()))
     R.SetInterpolator(sitk.sitkLinear)
-    return R
+    return outputFile, R
 
 
 fixed = sitk.ReadImage('./test/100307/T1mni.nii.gz', sitk.sitkFloat32)
 moving = sitk.ReadImage('./test/100307/T2mni.nii.gz', sitk.sitkFloat32)
 
 # different registration and metric systems
-# R = MMI_RSGD()
-# R = corr_RSGD()
-# fixed, moving, R = GDLS()
-R = RSGD()
+# outputFile, R = RSGD() # Total exection time: 32.13047194480896s
+# outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
+outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
+# outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
+
 
 R.AddCommand( sitk.sitkIterationEvent, lambda: command_iteration(R) )
 
@@ -90,10 +96,12 @@ print("Optimizer stop condition: {0}".format(R.GetOptimizerStopConditionDescript
 print(" Iteration: {0}".format(R.GetOptimizerIteration()))
 print(" Metric value: {0}".format(R.GetMetricValue()))
 
-sitk.WriteTransform(outTx,  'myRegistred.nii.gz')
+sitk.WriteTransform(outTx,  outputFile)
 
-# if ( not "SITK_NOSHOW" in os.environ ):
-#     resampler = sitk.ResampleImageFilter()
-#     resampler.SetReferenceImage(fixed)
-#     resampler.SetInterpolator(sitk.sitkLinear)
-#     resampler.SetDefaultPixelValue(100)
+
+if ( not "SITK_NOSHOW" in os.environ ):
+    resampler = sitk.ResampleImageFilter()
+    resampler.SetReferenceImage(fixed);
+    resampler.SetInterpolator(sitk.sitkLinear)
+    resampler.SetDefaultPixelValue(100)
+    resampler.SetTransform(outTx)
