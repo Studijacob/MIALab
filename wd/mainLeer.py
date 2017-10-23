@@ -18,7 +18,7 @@ def RSGD():
     # outputFile = 'RSGD.nii.gz'
     R = sitk.ImageRegistrationMethod()
     R.SetMetricAsMeanSquares()
-    R.SetOptimizerAsRegularStepGradientDescent(4.0, .01, 200)
+    R.SetOptimizerAsRegularStepGradientDescent(4.0, .001, 200)
     R.SetInitialTransform(sitk.TranslationTransform(fixed.GetDimension()))
     R.SetInterpolator(sitk.sitkLinear)
     return outputFile, R
@@ -75,8 +75,8 @@ moving = sitk.ReadImage('./test/100307/T2mni.nii.gz', sitk.sitkFloat32)
 
 # different registration and metric systems
 # outputFile, R = RSGD() # Total exection time: 32.13047194480896s
-# outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
-outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
+outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
+# outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
 # outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
 
 
@@ -98,6 +98,8 @@ print(" Metric value: {0}".format(R.GetMetricValue()))
 
 sitk.WriteTransform(outTx,  outputFile)
 
+registered_image = sitk.Resample(moving, fixed, outTx, sitk.sitkLinear, 0.0, moving.GetPixelIDValue())
+sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
 
 if ( not "SITK_NOSHOW" in os.environ ):
     resampler = sitk.ResampleImageFilter()
