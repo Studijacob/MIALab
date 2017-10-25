@@ -15,7 +15,6 @@ def command_iteration(method) :
 
 def RSGD():
     outputFile = 'RSGD.txt'
-    # outputFile = 'RSGD.nii.gz'
     R = sitk.ImageRegistrationMethod()
     R.SetMetricAsMeanSquares()
     R.SetOptimizerAsRegularStepGradientDescent(4.0, .001, 200)
@@ -75,9 +74,9 @@ moving = sitk.ReadImage('./test/100307/T1native.nii.gz', sitk.sitkFloat32)
 
 # different registration and metric systems
 # outputFile, R = RSGD() # Total exection time: 32.13047194480896s
-# outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
+outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
 # outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
-outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
+# outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
 
 
 R.AddCommand( sitk.sitkIterationEvent, lambda: command_iteration(R) )
