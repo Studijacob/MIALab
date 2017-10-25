@@ -70,14 +70,14 @@ def MMI_RSGD():
     return outputFile, R
 
 
-fixed = sitk.ReadImage('./test/100307/T1mni.nii.gz', sitk.sitkFloat32)
-moving = sitk.ReadImage('./test/100307/T2mni.nii.gz', sitk.sitkFloat32)
+fixed = sitk.ReadImage('./test/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz', sitk.sitkFloat32)
+moving = sitk.ReadImage('./test/100307/T1native.nii.gz', sitk.sitkFloat32)
 
 # different registration and metric systems
 # outputFile, R = RSGD() # Total exection time: 32.13047194480896s
-outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
+# outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
 # outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
-# outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
+outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
 
 
 R.AddCommand( sitk.sitkIterationEvent, lambda: command_iteration(R) )
@@ -100,6 +100,10 @@ sitk.WriteTransform(outTx,  outputFile)
 
 registered_image = sitk.Resample(moving, fixed, outTx, sitk.sitkLinear, 0.0, moving.GetPixelIDValue())
 sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+
+T2_native = sitk.ReadImage('./test/100307/T2native.nii.gz', sitk.sitkFloat32)
+registered_image_T2 = sitk.Resample(T2_native, fixed, outTx, sitk.sitkLinear, 0.0, moving.GetPixelIDValue())
+sitk.WriteImage(registered_image_T2, 'myRegistred2_T2.nii.gz')
 
 if ( not "SITK_NOSHOW" in os.environ ):
     resampler = sitk.ResampleImageFilter()
