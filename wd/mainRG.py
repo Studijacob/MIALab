@@ -322,10 +322,13 @@ if(d3D):
     dimensions = 3
     fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
     moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
+    labels_native_image = sitk.ReadImage('./test/100307/labels_native.nii.gz')
     registration = MultiModalRegistration()  # specify parameters to your needs
     parameters = MultiModalRegistrationParams(fixed_image)
     registered_image = registration.execute(moving_image, parameters)
+    labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
     sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+    sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
 
 else:
     #testing 2D
