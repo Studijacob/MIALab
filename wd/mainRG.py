@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
 
+import mialab.utilities.pipeline_utilities as putil
 import mialab.filtering.filter as fltr
 
 class RegistrationType(Enum):
@@ -317,9 +318,13 @@ class RegistrationPlotter:
 
 d3D = True
 
+# initialize evaluator
+evaluator = putil.init_evaluator('./experiment1/')
+
 if(d3D):
     #Testing 3D
     dimensions = 3
+    loadTransformation = True
 
     # Read in the images:
     fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
@@ -331,20 +336,44 @@ if(d3D):
     registration = MultiModalRegistration()  # specify parameters to your needs
     parameters = MultiModalRegistrationParams(fixed_image)
 
-    # Register the moving image and create the corresponding transformation during execute:
-    registered_image = registration.execute(moving_image, parameters)
+    # CREATE NEW TRANSFORMATION:
+    if not loadTransformation:
+        # Register the moving image and create the corresponding transformation during execute:
+        registered_image = registration.execute(moving_image, parameters)
+        # Save transformaiton:
+        sitk.WriteTransform(registration.transform, 'myTransformation.tfm')
+
+    else:
+        registration.transform = sitk.ReadTransform('myTransformation.tfm')
+        # Apply the transformation to the moving image:
+        registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
+                                         moving_image.GetPixelIDValue())
 
     # Apply the transformation to the native lables image:
     labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
 
+    # Set up ConnectedThresholdImageFilter for segmentation
+    # sitk.BinaryThreshold()
+    # segmentationFilter = sitk.ConnectedThresholdImageFilter()
+    # segmentationFilter.SetLower(float(0.9))
+    # segmentationFilter.SetUpper(float(1.1))
+    # segmentationFilter.SetReplaceValue(float(0.0))
 
-    sitk.
+    # Run the segmentation filter
+    # labels_mni_atlas_segmented = segmentationFilter.Execute(labels_mni_atlas)
 
+    # Subtract the registerd labels to get the error between the two images:
+    subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
 
+    # Evaluate transformation:
+    evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
 
     # Save the images:
     sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
     sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
+    sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
+    #sitk.WriteImage(labels_mni_atlas_segmented, 'labels_mni_atlas_segmented.nii.gz')
+
 
 else:
     #testing 2D
