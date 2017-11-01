@@ -320,7 +320,7 @@ d3D = True
 if(d3D):
     #Testing 3D
     dimensions = 3
-    
+
     # Read in the images:
     fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
     moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
