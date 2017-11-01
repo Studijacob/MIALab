@@ -157,6 +157,7 @@ class MultiModalRegistration(fltr.IFilter):
         if self.registration_type == RegistrationType.RIGID:
             transform_type = sitk.VersorRigid3DTransform()
         elif self.registration_type == RegistrationType.AFFINE:
+            # transform_type = sitk.Similarity3DTransform() #dimension
             transform_type = sitk.AffineTransform(3) #dimension
         else:
             raise ValueError('not supported registration_type')

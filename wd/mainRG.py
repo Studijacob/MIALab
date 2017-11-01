@@ -66,6 +66,11 @@ if(d3D):
     # Evaluate transformation:
     evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
 
+    if exec_time > 0:
+        file = open('./experiment1/results.csv', 'a')
+        file.write('Total exection time; {}s'.format(exec_time))
+        file.close()
+
     # Save the images:
     sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
     sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
