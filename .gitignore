@@ -240,3 +240,6 @@ bin/mia-model/
 bin/mia-result/
 *.nii.gz
 *.mha
+*.tfm
+*.csv
+*.xlsx
