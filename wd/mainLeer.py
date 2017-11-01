@@ -54,6 +54,29 @@ def corr_RSGD(fixed, moving):
     R.SetInterpolator(sitk.sitkLinear)
     return outputFile, R
 
+def MR_MMI_GD(fixed_image, moving_image):
+    outputFile = 'MR_MMI_GD.txt'
+    # initial alignment of the two volumes
+    transform = sitk.CenteredTransformInitializer(fixed_image, moving_image, sitk.Similarity3DTransform(),sitk.CenteredTransformInitializerFilter.GEOMETRY)
+    # multi-resolution rigid registration using Mutual Information
+    R = sitk.ImageRegistrationMethod()
+    R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
+    R.SetMetricSamplingStrategy(R.RANDOM)
+    R.SetMetricSamplingPercentage(0.01)
+    R.SetInterpolator(sitk.sitkLinear)
+    R.SetOptimizerAsRegularStepGradientDescent(learningRate=1.0,
+                                               minStep=0.0001,
+                                               numberOfIterations=200,
+                                               relaxationFactor=0.7,
+                                               gradientMagnitudeTolerance=1e-4,
+                                               estimateLearningRate=R.EachIteration,
+                                               maximumStepSizeInPhysicalUnits=0.0)
+    R.SetOptimizerScalesFromPhysicalShift()
+    R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 1])
+    R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 0])
+    R.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+    R.SetInitialTransform(transform)
+    return outputFile, R
 
 def MMI_RSGD():
     outputFile = 'MMI_RSGD.txt'
@@ -74,8 +97,9 @@ moving = sitk.ReadImage('./test/100307/T1native.nii.gz', sitk.sitkFloat32)
 
 # different registration and metric systems
 # outputFile, R = RSGD() # Total exection time: 32.13047194480896s
-outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
+# outputFile, fixed, moving, R = GDLS(fixed, moving) # Total exection time: 219.74626207351685s
 # outputFile, R = corr_RSGD(fixed, moving) # Total exection time: 199.60729265213013s
+outputFile, R = MR_MMI_GD(fixed, moving)
 # outputFile, R = MMI_RSGD() # Total exection time: 7.378397226333618s
 
 
@@ -97,6 +121,7 @@ print(" Metric value: {0}".format(R.GetMetricValue()))
 
 sitk.WriteTransform(outTx,  outputFile)
 
+# no scaling -> maybe no transformation applyed before saving??
 registered_image = sitk.Resample(moving, fixed, outTx, sitk.sitkLinear, 0.0, moving.GetPixelIDValue())
 sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
 

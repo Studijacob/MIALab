@@ -182,7 +182,8 @@ class MultiModalRegistration(fltr.IFilter):
         elif self.number_of_iterations == self.registration.GetOptimizerIteration():
             print('MultiModalRegistration: Optimizer terminated at number of iterations and did not converge!')
 
-        return sitk.Resample(image, params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+        #return sitk.Resample(image, params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+        return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
 
     def __str__(self):
         """Gets a nicely printable string representation.
@@ -275,7 +276,7 @@ class RegistrationPlotter:
         plot_image = sitk.GetImageFromArray(plot_data, isVector=True)
 
         # Extract the central axial slice from the two volumes, compose it using the transformation and alpha blend it
-        alpha = 0.7
+        alpha = 1.0
 
         central_index = round((fixed.GetSize())[2] / 2)
 
@@ -319,19 +320,22 @@ d3D = True
 if(d3D):
     #Testing 3D
     dimensions = 3
-    fixed_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
-    moving_image = sitk.ReadImage('./test/188347/T2native.nii.gz')
+    fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
+    labels_native_image = sitk.ReadImage('./test/100307/labels_native.nii.gz')
     registration = MultiModalRegistration()  # specify parameters to your needs
     parameters = MultiModalRegistrationParams(fixed_image)
     registered_image = registration.execute(moving_image, parameters)
-    sitk.WriteImage(registered_image, 'myRegistred.nii.gz')
+    labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
+    sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+    sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
 
 else:
     #testing 2D
     dimensions = 2
-    fixed_image = sitk.ReadImage('./DummyImages/RegistrationA.jpg')
-    moving_image = sitk.ReadImage('./DummyImages/RegistrationB.jpg')
+    fixed_image = sitk.ReadImage('./DummyImages/RegistrationAmitAlpha.tif')
+    moving_image = sitk.ReadImage('./DummyImages/RegistrationBmitAlpha.tif')
     registration = MultiModalRegistration()  # specify parameters to your needs
     parameters = MultiModalRegistrationParams(fixed_image)
     registered_image = registration.execute(moving_image, parameters)
-    sitk.WriteImage(registered_image, 'DummyRegistred.jpg')
+    sitk.WriteImage(registered_image, 'DummyRegistred4.tif')
