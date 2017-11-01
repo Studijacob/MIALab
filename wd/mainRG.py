@@ -319,8 +319,8 @@ d3D = True
 if(d3D):
     #Testing 3D
     dimensions = 3
-    fixed_image = sitk.ReadImage('./test/100307/T1mni.nii.gz')
-    moving_image = sitk.ReadImage('./test/100307/T2mni.nii.gz')
+    fixed_image = sitk.ReadImage('./test/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
     registration = MultiModalRegistration()  # specify parameters to your needs
     parameters = MultiModalRegistrationParams(fixed_image)
     registered_image = registration.execute(moving_image, parameters)

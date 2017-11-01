@@ -57,15 +57,20 @@ def corr_RSGD(fixed, moving):
 def MR_MMI_GD(fixed_image, moving_image):
     outputFile = 'MR_MMI_GD.txt'
     # initial alignment of the two volumes
-    transform = sitk.CenteredTransformInitializer(fixed_image, moving_image, sitk.Euler3DTransform(),sitk.CenteredTransformInitializerFilter.GEOMETRY)
+    transform = sitk.CenteredTransformInitializer(fixed_image, moving_image, sitk.Similarity3DTransform(),sitk.CenteredTransformInitializerFilter.GEOMETRY)
     # multi-resolution rigid registration using Mutual Information
     R = sitk.ImageRegistrationMethod()
     R.SetMetricAsMattesMutualInformation(numberOfHistogramBins=50)
     R.SetMetricSamplingStrategy(R.RANDOM)
     R.SetMetricSamplingPercentage(0.01)
     R.SetInterpolator(sitk.sitkLinear)
-    R.SetOptimizerAsGradientDescent(learningRate=1.0, numberOfIterations=100,
-                                                      convergenceMinimumValue=1e-6, convergenceWindowSize=10)
+    R.SetOptimizerAsRegularStepGradientDescent(learningRate=1.0,
+                                               minStep=0.0001,
+                                               numberOfIterations=200,
+                                               relaxationFactor=0.7,
+                                               gradientMagnitudeTolerance=1e-4,
+                                               estimateLearningRate=R.EachIteration,
+                                               maximumStepSizeInPhysicalUnits=0.0)
     R.SetOptimizerScalesFromPhysicalShift()
     R.SetShrinkFactorsPerLevel(shrinkFactors=[4, 2, 1])
     R.SetSmoothingSigmasPerLevel(smoothingSigmas=[2, 1, 0])
