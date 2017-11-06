@@ -33,10 +33,14 @@ if(d3D):
     # Read in the images:
     print("load images ...", end="")
     fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
-    moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
-    labels_native_image = sitk.ReadImage('./test/100307/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('./test/100307/labels_mniatlas.nii.gz')
+    moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
+    labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
     print(" done")
+
+    file = open('./experiment1/results.csv', 'a')
+    file.write('Patient Nr;' + ' 100307' + "\n")
+    file.close
 
     # Define registration method:
     print("initialize transformation ... ", end="")
@@ -52,7 +56,7 @@ if(d3D):
         registered_image = registration.execute(moving_image, parameters)
         exec_time = time.time() - start
         print(" done")
-        print('Total exection time: {}s'.format(exec_time))
+        print('Total exection time: {}'.format(exec_time))
 
         # Save transformaiton:
         sitk.WriteTransform(registration.transform, 'myTransformation.tfm')
@@ -76,7 +80,7 @@ if(d3D):
 
     if exec_time > 0:
         file = open('./experiment1/results.csv', 'a')
-        file.write('Total exection time; {}s'.format(exec_time))
+        file.write('Total exection time; {}s'.format(exec_time) + "\n")
         file.close()
 
     # Save the images:
