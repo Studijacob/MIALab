@@ -31,21 +31,27 @@ if(d3D):
     loadTransformation = False
 
     # Read in the images:
+    print("load images ...", end="")
     fixed_image = sitk.ReadImage('./atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
     moving_image = sitk.ReadImage('./test/100307/T1native.nii.gz')
     labels_native_image = sitk.ReadImage('./test/100307/labels_native.nii.gz')
     labels_mni_atlas = sitk.ReadImage('./test/100307/labels_mniatlas.nii.gz')
+    print(" done")
 
     # Define registration method:
+    print("initialize transformation ... ", end="")
     registration = R.MultiModalRegistration()  # specify parameters to your needs
     parameters = R.MultiModalRegistrationParams(fixed_image)
+    print("done")
 
     # CREATE NEW TRANSFORMATION:
     if not loadTransformation:
         # Register the moving image and create the corresponding transformation during execute:
+        print("calculate transformation ...", end="")
         start = time.time()
         registered_image = registration.execute(moving_image, parameters)
         exec_time = time.time() - start
+        print(" done")
         print('Total exection time: {}s'.format(exec_time))
 
         # Save transformaiton:
@@ -64,7 +70,9 @@ if(d3D):
     subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
 
     # Evaluate transformation:
+    print("evaluating ...")
     evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+    print(" done")
 
     if exec_time > 0:
         file = open('./experiment1/results.csv', 'a')
@@ -75,6 +83,9 @@ if(d3D):
     sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
     sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
     sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
+
+    # https://stackoverflow.com/questions/5598181/python-print-on-same-line
+    # https://stackoverflow.com/questions/18262293/how-to-open-every-file-in-a-folder
 
 else:
     #testing 2D

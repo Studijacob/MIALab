@@ -52,7 +52,10 @@ class CSVEvaluatorWriter(IEvaluatorWriter):
         if not self.path.lower().endswith('.csv'):
             self.path = os.path.join(self.path, '.csv')
 
-        open(self.path, 'w', newline='')  # creates (and overrides an existing) file
+        if os.path.isfile(self.path):
+            open(self.path, 'a', newline='')  # w; creates (and overrides an existing) file
+        else:
+            open(self.path, 'w', newline='')  # w; creates (and overrides an existing) file
 
     def write(self, data: list):
         """Writes the evaluation results.
