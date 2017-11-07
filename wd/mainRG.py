@@ -101,9 +101,9 @@ if(d3D):
             file.close()
 
     # Save the images:
-    sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
-    sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
-    sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
+    # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+    # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
+    # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
     # https://stackoverflow.com/questions/5598181/python-print-on-same-line
     # https://stackoverflow.com/questions/18262293/how-to-open-every-file-in-a-folder
