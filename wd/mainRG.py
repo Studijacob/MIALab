@@ -47,8 +47,9 @@ if(d3D):
     file.write('Patient Nr;' + ' 100307' + "\n")
     file.close
 
-# Do several registrations:
-    nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400]
+    # Do several registrations:
+    # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
+    nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
         # Define registration method:
         print("initialize transformation ... ", end="")
@@ -62,7 +63,14 @@ if(d3D):
         my_smoothing_sigmas = (2, 1, 0) # [float]
         my_sampling_percentage = 0.2 # float
 
-        registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins, learning_rate=my_learning_rate, step_size=my_step_size, number_of_iterations=my_number_of_iterations, relaxation_factor=my_relaxation_factor, shrink_factors=my_shrink_factors, smoothing_sigmas=my_smoothing_sigmas, sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
+        registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
+                                                learning_rate=my_learning_rate,
+                                                step_size=my_step_size,
+                                                number_of_iterations=my_number_of_iterations,
+                                                relaxation_factor=my_relaxation_factor,
+                                                shrink_factors=my_shrink_factors,
+                                                smoothing_sigmas=my_smoothing_sigmas,
+                                                sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
         parameters = R.MultiModalRegistrationParams(fixed_image)
         print("done")
 
