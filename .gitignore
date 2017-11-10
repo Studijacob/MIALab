@@ -242,3 +242,4 @@ bin/mia-result/
 *.mha
 *.tfm
 *.csv
+*.sh
