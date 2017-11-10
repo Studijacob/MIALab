@@ -37,8 +37,16 @@ if(d3D):
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('..data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+
+    print(fixed_image.GetSize())
+    fixed_image_crop = fixed_image[90:110,90:110,90:110]
+
     moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
+    print(moving_image.GetSize())
+    moving_image_crop = moving_image[90:110, 90:110, 90:110]
+
+
     labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
     labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
     print(" done")
@@ -71,7 +79,8 @@ if(d3D):
                                                 shrink_factors=my_shrink_factors,
                                                 smoothing_sigmas=my_smoothing_sigmas,
                                                 sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
-        parameters = R.MultiModalRegistrationParams(fixed_image)
+        #parameters = R.MultiModalRegistrationParams(fixed_image)
+        parameters = R.MultiModalRegistrationParams(fixed_image_crop)
         print("done")
 
         # CREATE NEW TRANSFORMATION:
@@ -79,7 +88,8 @@ if(d3D):
             # Register the moving image and create the corresponding transformation during execute:
             print("calculate transformation ...", end="")
             start = time.time()
-            registered_image = registration.execute(moving_image, parameters)
+            #registered_image = registration.execute(moving_image, parameters)
+            registered_image = registration.execute(moving_image_crop, parameters)
             exec_time = time.time() - start
             print(" done")
             print('Total exection time: {}'.format(exec_time))
