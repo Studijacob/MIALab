@@ -54,7 +54,7 @@ if(d3D):
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        mode = "bspline" #multimodal
+        mode = "multimodal" #multimodal
 
         print("initialize transformation ... ", end="")
         if mode == "multimodal":
@@ -68,7 +68,7 @@ if(d3D):
             my_shrink_factors = (2, 1, 1) # [int]
             my_smoothing_sigmas = (2, 1, 0) # [float]
             my_sampling_percentage = 0.2 # float
-
+            
             registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
                                                     learning_rate=my_learning_rate,
                                                     step_size=my_step_size,
