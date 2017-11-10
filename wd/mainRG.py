@@ -46,13 +46,7 @@ if(d3D):
     print("load images ...", end="")
     fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
-    print(fixed_image.GetSize())
-    fixed_image_crop = fixed_image[90:110,90:110,90:110]
-
     moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
-    print(moving_image.GetSize())
-    moving_image_crop = moving_image[90:110, 90:110, 90:110]
-
 
     labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
     labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
@@ -62,7 +56,7 @@ if(d3D):
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        mode = "multimodal" #multimodal
+        mode = "bspline" #multimodal
 
         print("initialize transformation ... ", end="")
         if mode == "multimodal":
@@ -99,7 +93,7 @@ if(d3D):
             print("calculate transformation ...", end="")
             start = time.time()
             #registered_image = registration.execute(moving_image, parameters)
-            registered_image = registration.execute(moving_image_crop, parameters)
+            registered_image = registration.execute(moving_image, parameters)
             exec_time = time.time() - start
             print(" done")
             print('Total exection time: {}'.format(exec_time))
@@ -117,7 +111,7 @@ if(d3D):
         labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
 
         # Subtract the registerd labels to get the error between the two images:
-        subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
+        #subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
 
         # Evaluate transformation:
         print("evaluating ... ", end="")
@@ -135,8 +129,8 @@ if(d3D):
         print("done")
 
         # Save the images:
-        # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
-        # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
+        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+        sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
 else:
