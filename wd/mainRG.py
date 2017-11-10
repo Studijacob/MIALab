@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
 import time
+import csv
 
 import mialab.utilities.pipeline_utilities as putil
 import mialab.filtering.filter as fltr
@@ -34,6 +35,12 @@ if(d3D):
     #Testing 3D
     dimensions = 3
     loadTransformation = False
+    patientID = 100307
+
+    # start the csv
+    file = open('./experiment1/results.csv', 'a')
+    file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
+    file.close
 
     # Read in the images:
     print("load images ...", end="")
@@ -51,36 +58,39 @@ if(d3D):
     labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
     print(" done")
 
-    file = open('./experiment1/results.csv', 'a')
-    file.write('Patient Nr;' + ' 100307' + "\n")
-    file.close
-
     # Do several registrations:
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        # Define registration method:
-        print("initialize transformation ... ", end="")
-        my_registration_type = RegistrationType.AFFINE
-        my_number_of_histogram_bins = i # int
-        my_learning_rate = 1.0 # float
-        my_step_size = 0.001 # float
-        my_number_of_iterations = 200 # int
-        my_relaxation_factor = 0.5 # int
-        my_shrink_factors = (2, 1, 1) # [int]
-        my_smoothing_sigmas = (2, 1, 0) # [float]
-        my_sampling_percentage = 0.2 # float
+        mode = "multimodal" #multimodal
 
-        registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
-                                                learning_rate=my_learning_rate,
-                                                step_size=my_step_size,
-                                                number_of_iterations=my_number_of_iterations,
-                                                relaxation_factor=my_relaxation_factor,
-                                                shrink_factors=my_shrink_factors,
-                                                smoothing_sigmas=my_smoothing_sigmas,
-                                                sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
-        #parameters = R.MultiModalRegistrationParams(fixed_image)
-        parameters = R.MultiModalRegistrationParams(fixed_image_crop)
+        print("initialize transformation ... ", end="")
+        if mode == "multimodal":
+            # Define registration method:
+            my_registration_type = RegistrationType.AFFINE
+            my_number_of_histogram_bins = i # int
+            my_learning_rate = 1.0 # float
+            my_step_size = 0.001 # float
+            my_number_of_iterations = 200 # int
+            my_relaxation_factor = 0.5 # int
+            my_shrink_factors = (2, 1, 1) # [int]
+            my_smoothing_sigmas = (2, 1, 0) # [float]
+            my_sampling_percentage = 0.2 # float
+
+            registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
+                                                    learning_rate=my_learning_rate,
+                                                    step_size=my_step_size,
+                                                    number_of_iterations=my_number_of_iterations,
+                                                    relaxation_factor=my_relaxation_factor,
+                                                    shrink_factors=my_shrink_factors,
+                                                    smoothing_sigmas=my_smoothing_sigmas,
+                                                    sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
+            parameters = R.MultiModalRegistrationParams(fixed_image)
+        elif mode == "bspline":
+            registration = R.BSplineRegistration()
+            parameters = R.BSplineRegistrationParams(fixed_image)
+        else:
+            print("no correct Model")
         print("done")
 
         # CREATE NEW TRANSFORMATION:
@@ -110,21 +120,24 @@ if(d3D):
         subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
 
         # Evaluate transformation:
-        print("evaluating ...")
-        evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+        print("evaluating ... ", end="")
+        results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+        print("done")
 
-        if exec_time > 0:
-            file = open('./experiment1/results.csv', 'a')
-            file.write('Total exection time; {}'.format(exec_time) + '\n')
-            file.close()
+        # write to file
+        print("write results to file ... ", end="")
+        results.append(patientID)
+        results.append(exec_time)
+        file = open('./experiment1/results.csv', "a")
+        writer = csv.writer(file)
+        writer.writerow(results)
+        file.close()
+        print("done")
 
-    # Save the images:
-    # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
-    # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
-    # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
-
-    # https://stackoverflow.com/questions/5598181/python-print-on-same-line
-    # https://stackoverflow.com/questions/18262293/how-to-open-every-file-in-a-folder
+        # Save the images:
+        # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+        # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
+        # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
 else:
     #testing 2D
