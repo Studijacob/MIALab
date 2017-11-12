@@ -41,6 +41,7 @@ class BSplineRegistrationParams(fltr.IFilterParams):
         self.fixed_image_mask = fixed_image_mask
         self.plot_directory_path = plot_directory_path
 
+
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,

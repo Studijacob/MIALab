@@ -19,7 +19,7 @@ import csv
 
 import mialab.utilities.pipeline_utilities as putil
 import mialab.filtering.filter as fltr
-import wd.registration.registration as R
+import registration.registration as R
 
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
@@ -35,6 +35,7 @@ if(d3D):
     #Testing 3D
     dimensions = 3
     loadTransformation = False
+    PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
 
     # start the csv
@@ -56,7 +57,7 @@ if(d3D):
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        mode = "bspline" #multimodal
+        mode = "bspline" #bspline , multimodal
 
         print("initialize transformation ... ", end="")
         if mode == "multimodal":
