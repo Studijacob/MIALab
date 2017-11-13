@@ -29,7 +29,7 @@ class RegistrationType(Enum):
 d3D = True
 
 # initialize evaluator
-evaluator = putil.init_evaluator('./experiment1/')
+evaluator = putil.init_evaluator('./wd/experiment1/')
 
 if(d3D):
     #Testing 3D
@@ -39,18 +39,18 @@ if(d3D):
     patientID = 100307
 
     # start the csv
-    file = open('./experiment1/results.csv', 'a')
+    file = open('./wd/experiment1/results.csv', 'a')
     file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
     file.close
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('./data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
-    moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
+    moving_image = sitk.ReadImage('./data/test/100307/T1native.nii.gz')
 
-    labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
+    labels_native_image = sitk.ReadImage('./data/test/100307/labels_native.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('./data/test/100307/labels_mniatlas.nii.gz')
     print(" done")
 
     # Do several registrations:
@@ -127,15 +127,15 @@ if(d3D):
         print("write results to file ... ", end="")
         results.append(patientID)
         results.append(exec_time)
-        file = open('./experiment1/results.csv', "a")
+        file = open('./wd/experiment1/results.csv', "a")
         writer = csv.writer(file)
         writer.writerow(results)
         file.close()
         print("done")
 
         # Save the images:
-        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
-        sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
+        # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+        # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
 else:
