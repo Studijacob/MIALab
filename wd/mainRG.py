@@ -118,6 +118,8 @@ if(d3D):
         results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
         print("done")
 
+        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+
         # write to file
         print("write results to file ... ", end="")
         results.append(patientID)
@@ -129,7 +131,7 @@ if(d3D):
         print("done")
 
         # Save the images:
-        # sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+
         # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
