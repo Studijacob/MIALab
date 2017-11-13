@@ -196,9 +196,9 @@ class Evaluator:
 #        self.writers.append(writer)
 #        self.is_header_written = False  # re-write header
 
-    def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray] ):
-    # def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray],
-    #              evaluation_id: str):
+    # def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray] ):
+    def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray],
+                 evaluation_id: str):
         """Evaluates the metrics on the provided image and ground truth image.
 
         Args:

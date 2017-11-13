@@ -92,9 +92,7 @@ if(d3D):
         # CREATE NEW TRANSFORMATION:
         if not loadTransformation:
             # Register the moving image and create the corresponding transformation during execute:
-
             start = time.time()
-            #registered_image = registration.execute(moving_image, parameters)
             registered_image = registration.execute(moving_image, parameters)
             exec_time = time.time() - start
 
@@ -114,13 +112,10 @@ if(d3D):
         # Apply the transformation to the native lables image:
         labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
 
-        # Subtract the registerd labels to get the error between the two images:
-        #subtracted_image = sitk.Subtract(labels_registred, labels_mni_atlas) #labels_registred - labels_mni_atlas;
-
         # Evaluate transformation:
         print("evaluating ... ", end="")
-        results = evaluator.evaluate(labels_registred,labels_mni_atlas)
-        # results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+        # results = evaluator.evaluate(labels_registred,labels_mni_atlas)
+        results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
         print("done")
 
         # write to file
