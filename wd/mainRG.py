@@ -101,10 +101,10 @@ if(d3D):
             print('Total exection time: {}'.format(exec_time))
 
             # Save transformaiton:
-            sitk.WriteTransform(registration.transform, 'myTransformation.tfm')
+            sitk.WriteTransform(registration.transform, './wd/myTransformation.tfm')
 
         else:
-            registration.transform = sitk.ReadTransform('myTransformation.tfm')
+            registration.transform = sitk.ReadTransform('./wd/myTransformation.tfm')
             # Apply the transformation to the moving image:
             registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
                                              moving_image.GetPixelIDValue())
