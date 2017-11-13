@@ -246,7 +246,8 @@ class Evaluator:
                     metric.segmentation = predictions_as_image
 
                 results.append(metric.calculate())
-
+        print(type(results))
+        print(results)
         return results
 
     def write_header(self):

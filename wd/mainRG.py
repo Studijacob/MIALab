@@ -34,7 +34,7 @@ evaluator = putil.init_evaluator('./experiment1/')
 if(d3D):
     #Testing 3D
     dimensions = 3
-    loadTransformation = False
+    loadTransformation = True
     PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
 
