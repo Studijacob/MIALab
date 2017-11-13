@@ -39,18 +39,18 @@ if(d3D):
     patientID = 100307
 
     # start the csv
-    file = open('./wd/experiment1/results.csv', 'a')
+    file = open('./experiment1/results.csv', 'w')
     file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
     file.close
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('./data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
-    moving_image = sitk.ReadImage('./data/test/100307/T1native.nii.gz')
+    moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
 
-    labels_native_image = sitk.ReadImage('./data/test/100307/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('./data/test/100307/labels_mniatlas.nii.gz')
+    labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
     print(" done")
 
     # Do several registrations:
@@ -101,10 +101,10 @@ if(d3D):
             print('Total exection time: {}'.format(exec_time))
 
             # Save transformaiton:
-            sitk.WriteTransform(registration.transform, './wd/myTransformation.tfm')
+            sitk.WriteTransform(registration.transform, './myTransformation.tfm')
 
         else:
-            registration.transform = sitk.ReadTransform('./wd/myTransformation.tfm')
+            registration.transform = sitk.ReadTransform('./myTransformation.tfm')
             # Apply the transformation to the moving image:
             registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
                                              moving_image.GetPixelIDValue())
@@ -126,9 +126,9 @@ if(d3D):
         # write to file
         print("write results to file ... ", end="")
         results.append(patientID)
-        results.append(exec_time)
-        file = open('./wd/experiment1/results.csv', "a")
-        writer = csv.writer(file)
+        if 'exec_time' in locals(): results.append(exec_time)
+        file = open('./experiment1/results.csv', "a")
+        writer = csv.writer(file, delimiter=';')
         writer.writerow(results)
         file.close()
         print("done")
