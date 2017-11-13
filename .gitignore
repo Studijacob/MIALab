@@ -243,3 +243,4 @@ bin/mia-result/
 *.tfm
 *.csv
 *.sh
+*.out

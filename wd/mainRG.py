@@ -57,7 +57,7 @@ if(d3D):
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        mode = "bspline" #bspline , multimodal
+        mode = "multimodal" #bspline , multimodal
 
         print("initialize transformation ... ", end="")
         if mode == "multimodal":
@@ -88,15 +88,16 @@ if(d3D):
             print("no correct Model")
         print("done")
 
+        print("calculate transformation ...", end="", flush=True)
         # CREATE NEW TRANSFORMATION:
         if not loadTransformation:
             # Register the moving image and create the corresponding transformation during execute:
-            print("calculate transformation ...", end="")
+
             start = time.time()
             #registered_image = registration.execute(moving_image, parameters)
             registered_image = registration.execute(moving_image, parameters)
             exec_time = time.time() - start
-            print(" done")
+
             print('Total exection time: {}'.format(exec_time))
 
             # Save transformaiton:
@@ -108,6 +109,8 @@ if(d3D):
             registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
                                              moving_image.GetPixelIDValue())
 
+        print(" done")
+
         # Apply the transformation to the native lables image:
         labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0, labels_native_image.GetPixelIDValue())
 
@@ -116,7 +119,8 @@ if(d3D):
 
         # Evaluate transformation:
         print("evaluating ... ", end="")
-        results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+        results = evaluator.evaluate(labels_registred,labels_mni_atlas)
+        # results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
         print("done")
 
         # write to file

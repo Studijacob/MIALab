@@ -196,8 +196,9 @@ class Evaluator:
 #        self.writers.append(writer)
 #        self.is_header_written = False  # re-write header
 
-    def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray],
-                 evaluation_id: str):
+    def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray] ):
+    # def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray],
+    #              evaluation_id: str):
         """Evaluates the metrics on the provided image and ground truth image.
 
         Args:
@@ -212,7 +213,7 @@ class Evaluator:
         results = []  # clear results
 
         for label, label_str in self.labels.items():
-            label_results = [evaluation_id, label_str]
+           # label_results = [evaluation_id, label_str]
 
             # get only current label
             predictions = np.in1d(image_array.ravel(), label, True).reshape(image_array.shape).astype(np.uint8)
