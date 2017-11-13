@@ -29,7 +29,7 @@ class RegistrationType(Enum):
 d3D = True
 
 # initialize evaluator
-evaluator = putil.init_evaluator('./wd/experiment1/')
+evaluator = putil.init_evaluator('./experiment1/')
 
 if(d3D):
     #Testing 3D
