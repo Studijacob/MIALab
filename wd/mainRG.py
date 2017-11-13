@@ -57,7 +57,7 @@ if(d3D):
     # nhistogramBins = [10, 50, 100, 150, 200, 250, 300, 400] # many different bin size
     nhistogramBins = [200] # default bin size
     for i in nhistogramBins:
-        mode = "bspline" #bspline , multimodal
+        mode = "multimodal" #bspline , multimodal
 
         print("initialize transformation ... ", end="")
         if mode == "multimodal":
