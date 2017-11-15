@@ -20,6 +20,7 @@ import csv
 import mialab.utilities.pipeline_utilities as putil
 import mialab.filtering.filter as fltr
 import registration.registration as R
+import registration.evalor as E
 
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
@@ -29,7 +30,7 @@ class RegistrationType(Enum):
 d3D = True
 
 # initialize evaluator
-evaluator = putil.init_evaluator('./experiment1/')
+evaluator = E.evalor()
 
 if(d3D):
     #Testing 3D
@@ -37,9 +38,10 @@ if(d3D):
     loadTransformation = True
     PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
+    path = './experiment1/results.csv'
 
     # start the csv
-    file = open('./experiment1/results.csv', 'w')
+    file = open(path, 'w')
     file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
     file.close
 
@@ -115,7 +117,7 @@ if(d3D):
         # Evaluate transformation:
         print("evaluating ... ", end="")
         # results = evaluator.evaluate(labels_registred,labels_mni_atlas)
-        results = evaluator.evaluate(labels_registred,labels_mni_atlas,'eval_result')
+        results = evaluator.evaluate(labels_registred,labels_mni_atlas)
         print("done")
 
         sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
@@ -124,7 +126,7 @@ if(d3D):
         print("write results to file ... ", end="")
         results.append(patientID)
         if 'exec_time' in locals(): results.append(exec_time)
-        file = open('./experiment1/results.csv', "a")
+        file = open(path, "a")
         writer = csv.writer(file, delimiter=';')
         writer.writerow(results)
         file.close()
