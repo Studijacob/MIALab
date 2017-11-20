@@ -244,3 +244,10 @@ bin/mia-result/
 *.csv
 *.sh
 *.out
+
+### TEX
+*.log
+*.blg
+*.aux
+*.bbl
+*.synctex.gz
