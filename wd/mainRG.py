@@ -16,6 +16,7 @@ import numpy as np
 import SimpleITK as sitk
 import time
 import csv
+import os.path
 
 import mialab.utilities.pipeline_utilities as putil
 import mialab.filtering.filter as fltr
@@ -35,7 +36,7 @@ evaluator = E.evalor()
 if(d3D):
     #Testing 3D
     dimensions = 3
-    loadTransformation = True
+    loadTransformation = False
     PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
     path = './experiment1/results.csv'
@@ -92,7 +93,12 @@ if(d3D):
 
         print("calculate transformation ...", end="", flush=True)
         # CREATE NEW TRANSFORMATION:
-        if not loadTransformation:
+        if loadTransformation and os.path.isfile('./myTransformation.tfm'):
+            registration.transform = sitk.ReadTransform('./myTransformation.tfm')
+            # Apply the transformation to the moving image:
+            registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
+                                             moving_image.GetPixelIDValue())
+        else:
             # Register the moving image and create the corresponding transformation during execute:
             start = time.time()
             registered_image = registration.execute(moving_image, parameters)
@@ -103,11 +109,6 @@ if(d3D):
             # Save transformaiton:
             sitk.WriteTransform(registration.transform, './myTransformation.tfm')
 
-        else:
-            registration.transform = sitk.ReadTransform('./myTransformation.tfm')
-            # Apply the transformation to the moving image:
-            registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
-                                             moving_image.GetPixelIDValue())
 
         print(" done")
 
