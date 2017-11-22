@@ -24,6 +24,116 @@ class RegistrationType(Enum):
     RIGID = 2
 
 
+class BSplineRegistrationParams(fltr.IFilterParams):
+    """Represents parameters for the multi-modal rigid registration."""
+
+    def __init__(self, fixed_image: sitk.Image, fixed_image_mask: sitk.Image=None, plot_directory_path: str=''):
+        """Initializes a new instance of the MultiModalRegistrationParams class.
+
+        Args:
+            fixed_image (sitk.Image): The fixed image for the registration.
+            fixed_image_mask (sitk.Image): A mask for the fixed image to limit the registration.
+            plot_directory_path (str): Path to the directory where to plot the registration progress if any.
+                Note that this increases the computational time.
+        """
+
+        self.fixed_image = fixed_image
+        self.fixed_image_mask = fixed_image_mask
+        self.plot_directory_path = plot_directory_path
+
+
+class BSplineRegistration(fltr.IFilter):
+
+    def __init__(self,
+                 number_of_iterations: int = 200,
+                 gradient_Convergence_Tolerance: float = 1e-5,
+                 max_number_of_corrections: int = 5,
+                 max_number_of_function_evaluations: int = 1000,
+                 cost_function_convergence_factor: float = 1e+7,
+                 shrink_factors: [int] = (6, 2, 1),
+                 smoothing_sigmas: [float] = (6, 2, 0)):
+        """Initializes a new instance of the MultiModalRegistration class.
+
+        Args:
+            registration_type (RegistrationType): The type of the registration ('rigid' or 'affine').
+            number_of_histogram_bins (int): The number of histogram bins.
+            learning_rate (float): The optimizer's learning rate.
+            step_size (float): The optimizer's step size. Each step in the optimizer is at least this large.
+            number_of_iterations (int): The maximum number of optimization iterations.
+            relaxation_factor (float): The relaxation factor to penalize abrupt changes during optimization.
+            shrink_factors ([int]): The shrink factors at each shrinking level (from high to low).
+            smoothing_sigmas ([int]):  The Gaussian sigmas for smoothing at each shrinking level (in physical units).
+            sampling_percentage (float): Fraction of voxel of the fixed image that will be used for registration (0, 1].
+                Typical values range from 0.01 (1 %) for low detail images to 0.2 (20 %) for high detail images.
+                The higher the fraction, the higher the computational time.
+        """
+        super().__init__()
+
+        if len(shrink_factors) != len(smoothing_sigmas):
+            raise ValueError("shrink_factors and smoothing_sigmas need to be same length")
+
+        self.max_number_of_corrections = max_number_of_corrections
+        self.max_number_of_function_evaluations = max_number_of_function_evaluations
+        self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
+        self.cost_function_convergence_factor = cost_function_convergence_factor
+        self.number_of_iterations = number_of_iterations
+        self.shrink_factors = shrink_factors
+        self.smoothing_sigmas = smoothing_sigmas
+
+        registration = sitk.ImageRegistrationMethod()
+
+        registration.SetMetricAsCorrelation()
+
+        # interpolator
+        # will evaluate the intensities of the moving image at non-rigid positions
+        registration.SetInterpolator(sitk.sitkLinear)
+#        registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=self.number_of_iterations,
+#                                          numberOfIterations=self.number_of_iterations,
+#                                          maximumNumberOfCorrections=self.max_number_of_corrections,
+#                                          maximumNumberOfFunctionEvaluations=self.max_number_of_function_evaluations,
+#                                          costFunctionConvergenceFactor=self.cost_function_convergence_factor)
+        registration.SetOptimizerAsGradientDescentLineSearch(5.0, 100,convergenceMinimumValue = 1e-4,convergenceWindowSize = 5)
+        registration.SetOptimizerScalesFromPhysicalShift()
+
+        # setup for the multi-resolution framework
+        registration.SetShrinkFactorsPerLevel(self.shrink_factors)
+        registration.SetSmoothingSigmasPerLevel(self.smoothing_sigmas)
+
+        self.registration = registration
+
+    def execute(self, image: sitk.Image, params: BSplineRegistrationParams = None) -> sitk.Image:
+        """Executes a multi-modal rigid registration.
+
+                Args:
+                    image (sitk.Image): The moving image.
+                    params (MultiModalRegistrationParams): The parameters, which contain the fixed image.
+
+                Returns:
+                    sitk.Image: The registered image.
+                """
+
+        if params is None:
+            raise ValueError("params is not defined")
+
+        transformDomainMeshSize = [10] * image.GetDimension()
+        initial_transform = sitk.BSplineTransformInitializer(params.fixed_image,
+                                              transformDomainMeshSize)
+        self.registration.SetInitialTransform(initial_transform, inPlace=True)
+
+        self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
+                                                   sitk.Cast(image, sitk.sitkFloat32))
+
+        if self.verbose:
+            print('BSplineRegistration:\n Final metric value: {0}'.format(self.registration.GetMetricValue()))
+            print(' Optimizer\'s stopping condition, {0}'.format(
+                self.registration.GetOptimizerStopConditionDescription()))
+        elif self.number_of_iterations == self.registration.GetOptimizerIteration():
+            print('BSplineRegistration: Optimizer terminated at number of iterations and did not converge!')
+
+        # return sitk.Resample(image, params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+        return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+
+
 class MultiModalRegistrationParams(fltr.IFilterParams):
     """Represents parameters for the multi-modal rigid registration."""
 

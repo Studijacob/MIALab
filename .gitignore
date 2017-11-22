@@ -242,3 +242,12 @@ bin/mia-result/
 *.mha
 *.tfm
 *.csv
+*.sh
+*.out
+
+### TEX
+*.log
+*.blg
+*.aux
+*.bbl
+*.synctex.gz

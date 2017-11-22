@@ -52,10 +52,10 @@ class CSVEvaluatorWriter(IEvaluatorWriter):
         if not self.path.lower().endswith('.csv'):
             self.path = os.path.join(self.path, '.csv')
 
-        if os.path.isfile(self.path):
-            open(self.path, 'a', newline='')  # w; creates (and overrides an existing) file
-        else:
-            open(self.path, 'w', newline='')  # w; creates (and overrides an existing) file
+        # if os.path.isfile(self.path):
+        #     open(self.path, 'a', newline='')  # w; creates (and overrides an existing) file
+        # else:
+        open(self.path, 'w', newline='')  # creates (and overrides an existing) file
 
     def write(self, data: list):
         """Writes the evaluation results.
@@ -162,7 +162,7 @@ class Evaluator:
         """
 
         self.metrics = []  # list of IMetrics
-        self.writers = [writer] if writer is not None else []  # list of IEvaluatorWriters
+        # self.writers = [writer] if writer is not None else []  # list of IEvaluatorWriters
         self.labels = {}  # dictionary of label: label_str
         self.is_header_written = False
 
@@ -193,9 +193,10 @@ class Evaluator:
             writer (IEvaluatorWriter): The writer.
         """
 
-        self.writers.append(writer)
-        self.is_header_written = False  # re-write header
+#        self.writers.append(writer)
+#        self.is_header_written = False  # re-write header
 
+    # def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray] ):
     def evaluate(self, image: Union[sitk.Image, np.ndarray], ground_truth: Union[sitk.Image, np.ndarray],
                  evaluation_id: str):
         """Evaluates the metrics on the provided image and ground truth image.
@@ -206,16 +207,13 @@ class Evaluator:
             evaluation_id (str): The identification of the evaluation.
         """
 
-        if not self.is_header_written:
-            self.write_header()
-
         image_array = sitk.GetArrayFromImage(image) if isinstance(image, sitk.Image) else image
         ground_truth_array = sitk.GetArrayFromImage(ground_truth) if isinstance(ground_truth, sitk.Image) else ground_truth
 
         results = []  # clear results
 
         for label, label_str in self.labels.items():
-            label_results = [evaluation_id, label_str]
+           # label_results = [evaluation_id, label_str]
 
             # get only current label
             predictions = np.in1d(image_array.ravel(), label, True).reshape(image_array.shape).astype(np.uint8)
@@ -247,13 +245,10 @@ class Evaluator:
                     metric.ground_truth = labels_as_image
                     metric.segmentation = predictions_as_image
 
-                label_results.append(metric.calculate())
-
-            results.append(label_results)
-
-        # write the results
-        for writer in self.writers:
-            writer.write(results)
+                results.append(metric.calculate())
+        print(type(results))
+        print(results)
+        return results
 
     def write_header(self):
         """Writes the header."""
