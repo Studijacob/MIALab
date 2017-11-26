@@ -36,7 +36,7 @@ evaluator = E.evalor()
 if(d3D):
     #Testing 3D
     dimensions = 3
-    loadTransformation = False
+    loadTransformation = True
     PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
     path = './experiment1/results.csv'
@@ -93,8 +93,10 @@ if(d3D):
 
         print("calculate transformation ...", end="", flush=True)
         # CREATE NEW TRANSFORMATION:
-        if loadTransformation and os.path.isfile('./myTransformation.tfm'):
-            registration.transform = sitk.ReadTransform('./myTransformation.tfm')
+        if loadTransformation and os.path.isfile('./Transformations/Slicer BSpline TransformV1.h5'):
+        #if loadTransformation and os.path.isfile('./Transformations/myTransformation.tfm'):
+            registration.transform = sitk.ReadTransform('./Transformations/Slicer BSpline TransformV1.h5')
+            #registration.transform = sitk.ReadTransform('./Transformations/myTransformation.tfm')
             # Apply the transformation to the moving image:
             registered_image = sitk.Resample(moving_image, registration.transform, sitk.sitkLinear, 0.0,
                                              moving_image.GetPixelIDValue())
@@ -107,7 +109,7 @@ if(d3D):
             print('Total exection time: {}'.format(exec_time))
 
             # Save transformaiton:
-            sitk.WriteTransform(registration.transform, './myTransformation.tfm')
+            sitk.WriteTransform(registration.transform, './Transformations/myTransformation.tfm')
 
 
         print(" done")

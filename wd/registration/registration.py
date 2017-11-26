@@ -45,7 +45,7 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 200,
+                 number_of_iterations: int = 1500,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
                  max_number_of_function_evaluations: int = 1000,
@@ -82,7 +82,7 @@ class BSplineRegistration(fltr.IFilter):
 
         registration = sitk.ImageRegistrationMethod()
 
-        registration.SetMetricAsCorrelation()
+        registration.SetMetricAsMattesMutualInformation()
 
         # interpolator
         # will evaluate the intensities of the moving image at non-rigid positions
@@ -115,9 +115,10 @@ class BSplineRegistration(fltr.IFilter):
         if params is None:
             raise ValueError("params is not defined")
 
-        transformDomainMeshSize = [10] * image.GetDimension()
-        initial_transform = sitk.BSplineTransformInitializer(params.fixed_image,
-                                              transformDomainMeshSize)
+        initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
+                                                              image,
+                                                              sitk.AffineTransform(3),
+                                                              sitk.CenteredTransformInitializerFilter.GEOMETRY)
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
 
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
