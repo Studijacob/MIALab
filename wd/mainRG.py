@@ -36,7 +36,7 @@ evaluator = E.evalor()
 if(d3D):
     #Testing 3D
     dimensions = 3
-    loadTransformation = True
+    loadTransformation = False
     PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
     patientID = 100307
     path = './experiment1/results.csv'
@@ -123,8 +123,6 @@ if(d3D):
         results = evaluator.evaluate(labels_registred,labels_mni_atlas)
         print("done")
 
-        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
-
         # write to file
         print("write results to file ... ", end="")
         results.append(patientID)
@@ -136,7 +134,7 @@ if(d3D):
         print("done")
 
         # Save the images:
-
+        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
         # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
