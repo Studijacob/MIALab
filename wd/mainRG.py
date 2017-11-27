@@ -62,8 +62,8 @@ if(d3D):
     for i in nhistogramBins:
         mode = "bspline" #bspline , multimodal
 
-        print("initialize transformation ... ", end="")
         if mode == "multimodal":
+            print("initialize multimodal transformation ... ", end="")
             # Define registration method:
             my_registration_type = RegistrationType.AFFINE
             my_number_of_histogram_bins = i # int
@@ -85,6 +85,7 @@ if(d3D):
                                                     sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
             parameters = R.MultiModalRegistrationParams(fixed_image)
         elif mode == "bspline":
+            print("initialize bspline transformation ... ", end="")
             registration = R.BSplineRegistration()
             parameters = R.BSplineRegistrationParams(fixed_image)
         else:
