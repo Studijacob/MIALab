@@ -23,6 +23,8 @@ import mialab.filtering.filter as fltr
 import registration.registration as R
 import registration.evalor as E
 
+import
+
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
     AFFINE = 1
@@ -48,7 +50,7 @@ if(d3D):
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
 
     moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
 
