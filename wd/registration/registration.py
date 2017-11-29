@@ -46,6 +46,7 @@ class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
                  number_of_iterations: int = 1500,
+                 number_of_bins: int = 200,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
                  max_number_of_function_evaluations: int = 1000,
@@ -77,21 +78,17 @@ class BSplineRegistration(fltr.IFilter):
         self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
         self.cost_function_convergence_factor = cost_function_convergence_factor
         self.number_of_iterations = number_of_iterations
+        self.number_of_bins = number_of_bins
         self.shrink_factors = shrink_factors
         self.smoothing_sigmas = smoothing_sigmas
 
         registration = sitk.ImageRegistrationMethod()
 
-        registration.SetMetricAsMattesMutualInformation()
+        registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
 
         # interpolator
         # will evaluate the intensities of the moving image at non-rigid positions
         registration.SetInterpolator(sitk.sitkLinear)
-#        registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=self.number_of_iterations,
-#                                          numberOfIterations=self.number_of_iterations,
-#                                          maximumNumberOfCorrections=self.max_number_of_corrections,
-#                                          maximumNumberOfFunctionEvaluations=self.max_number_of_function_evaluations,
-#                                          costFunctionConvergenceFactor=self.cost_function_convergence_factor)
         registration.SetOptimizerAsGradientDescentLineSearch(5.0, 100,convergenceMinimumValue = 1e-4,convergenceWindowSize = 5)
         registration.SetOptimizerScalesFromPhysicalShift()
 
@@ -115,10 +112,14 @@ class BSplineRegistration(fltr.IFilter):
         if params is None:
             raise ValueError("params is not defined")
 
-        initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
-                                                              image,
-                                                              sitk.AffineTransform(3),
-                                                              sitk.CenteredTransformInitializerFilter.GEOMETRY)
+        transformDomainMeshSize = [100] * image.GetDimension()
+        initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
+
+        # initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
+        #                                                       image,
+        #                                                       sitk.AffineTransform(3),
+        #                                                       sitk.CenteredTransformInitializerFilter.GEOMETRY)
+
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
 
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
