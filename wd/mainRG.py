@@ -23,8 +23,6 @@ import mialab.filtering.filter as fltr
 import registration.registration as R
 import registration.evalor as E
 
-import
-
 class RegistrationType(Enum):
     """Represents the registration transformation type."""
     AFFINE = 1
