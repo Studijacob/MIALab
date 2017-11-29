@@ -78,6 +78,7 @@ class BSplineRegistration(fltr.IFilter):
         self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
         self.cost_function_convergence_factor = cost_function_convergence_factor
         self.number_of_iterations = number_of_iterations
+        self.number_of_bins = number_of_bins
         self.shrink_factors = shrink_factors
         self.smoothing_sigmas = smoothing_sigmas
 
