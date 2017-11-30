@@ -45,7 +45,6 @@ R.SetSmoothingSigmasPerLevel([6,2,1])
 
 R.AddCommand( sitk.sitkIterationEvent, lambda: command_iteration(R) )
 R.AddCommand( sitk.sitkMultiResolutionIterationEvent, lambda: command_multi_iteration(R) )
-
 outTx = R.Execute(fixed, moving)
 
 print("-------")

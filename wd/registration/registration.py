@@ -45,11 +45,14 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 200,
+                 number_of_iterations: int = 100,
                  number_of_bins: int = 50,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
                  max_number_of_function_evaluations: int = 1000,
+                 max_number_step_lenght: float = 0.05,
+                 min_number_step_lenght: float = 0.001,
+                 relaxation_factor: float = 0.5,
                  cost_function_convergence_factor: float = 1e+7,
                  shrink_factors: [int] = (6, 2, 1),
                  smoothing_sigmas: [float] = (6, 2, 0)):
@@ -81,18 +84,21 @@ class BSplineRegistration(fltr.IFilter):
         self.number_of_bins = number_of_bins
         self.shrink_factors = shrink_factors
         self.smoothing_sigmas = smoothing_sigmas
+        self.max_number_step_lenght = max_number_step_lenght
+        self.min_number_step_lenght = min_number_step_lenght # SetOptimizerAsRegularStepGradientDescent
+        self.relaxation_factor = relaxation_factor # SetOptimizerAsRegularStepGradientDescent
 
         registration = sitk.ImageRegistrationMethod()
 
         # Similarity metric settings.
         registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
         registration.SetMetricSamplingStrategy(registration.RANDOM)
-        registration.SetMetricSamplingPercentage(0.01)
+        registration.SetMetricSamplingPercentage(0.001)
 
         registration.SetInterpolator(sitk.sitkLinear)
 
         # Optimizer settings.
-        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=1.0, numberOfIterations=100, convergenceMinimumValue=1e-6, convergenceWindowSize=10)
+        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=1.0, numberOfIterations=self.number_of_iterations)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
@@ -116,27 +122,16 @@ class BSplineRegistration(fltr.IFilter):
         if params is None:
             raise ValueError("params is not defined")
 
-        transformDomainMeshSize = [10] * image.GetDimension()
+        # transformDomainMeshSize = [10] * image.GetDimension()
+        transformDomainMeshSize = [14,10,12]
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
-        # initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
-        #                                                       image,
-        #                                                       sitk.AffineTransform(3),
-        #                                                       sitk.CenteredTransformInitializerFilter.GEOMETRY)
-
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
+        self.registration.SetTransform
 
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
                                                    sitk.Cast(image, sitk.sitkFloat32))
 
-        if self.verbose:
-            print('BSplineRegistration:\n Final metric value: {0}'.format(self.registration.GetMetricValue()))
-            print(' Optimizer\'s stopping condition, {0}'.format(
-                self.registration.GetOptimizerStopConditionDescription()))
-        elif self.number_of_iterations == self.registration.GetOptimizerIteration():
-            print('BSplineRegistration: Optimizer terminated at number of iterations and did not converge!')
-
-        # return sitk.Resample(image, params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
         return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
 
 
