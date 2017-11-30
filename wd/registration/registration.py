@@ -46,7 +46,7 @@ class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
                  number_of_iterations: int = 200,
-                 number_of_bins: int = 200,
+                 number_of_bins: int = 50,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
                  max_number_of_function_evaluations: int = 1000,
@@ -112,7 +112,7 @@ class BSplineRegistration(fltr.IFilter):
         if params is None:
             raise ValueError("params is not defined")
 
-        transformDomainMeshSize = [50] * image.GetDimension()
+        transformDomainMeshSize = [10] * image.GetDimension()
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         # initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
