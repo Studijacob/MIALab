@@ -123,7 +123,7 @@ class BSplineRegistration(fltr.IFilter):
             raise ValueError("params is not defined")
 
         # transformDomainMeshSize = [10] * image.GetDimension()
-        transformDomainMeshSize = [5,5,5]
+        transformDomainMeshSize = [14,10,12]
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         self.registration.SetInitialTransform(initial_transform, inPlace=True)

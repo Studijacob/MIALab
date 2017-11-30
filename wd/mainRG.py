@@ -48,12 +48,13 @@ if(d3D):
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    #fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/test/208226/T1mni.nii.gz')
 
     moving_image = sitk.ReadImage('../data/test/899885/T1native.nii.gz')
 
     labels_native_image = sitk.ReadImage('../data/test/899885/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('../data/test/899885/labels_mniatlas.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('../data/test/208226/labels_mniatlas.nii.gz')
     print(" done")
 
     # Do several registrations:
