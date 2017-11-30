@@ -162,6 +162,7 @@ $RECYCLE.BIN/
 
 # User-specific stuff:
 .idea/**/*.iml
+.idea/**/*.xml
 .idea/**/misc.xml
 .idea/**/modules.xml
 .idea/**/vcs.xml
