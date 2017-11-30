@@ -112,7 +112,7 @@ class BSplineRegistration(fltr.IFilter):
         if params is None:
             raise ValueError("params is not defined")
 
-        transformDomainMeshSize = [100] * image.GetDimension()
+        transformDomainMeshSize = [50] * image.GetDimension()
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         # initial_transform = sitk.CenteredTransformInitializer(sitk.Cast(params.fixed_image, image.GetPixelIDValue()),
