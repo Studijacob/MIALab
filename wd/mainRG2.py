@@ -85,15 +85,16 @@ print("calculate Multi transformation ...", end="", flush=True)
 # Register the moving image and create the corresponding transformation during execute:
 start = time.time()
 registered_image = registration.execute(moving_image, parameters)
+print(" done")
+print("calculate bspline transformation ...", end="", flush=True)
 registered_image = registrationB.execute(registered_image, parametersB)
 exec_time = time.time() - start
+print("done")
 
 print('Total exection time: {}'.format(exec_time))
 
 # Save transformaiton:
 sitk.WriteTransform(registration.transform, './Transformations/myTransformation.tfm')
-
-print(" done")
 
 # Apply the transformation to the native lables image:
 labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0,
@@ -105,7 +106,7 @@ print("evaluating ... ", end="")
 results = evaluator.evaluate(labels_registred, labels_mni_atlas)
 print("done")
 
-# write to file
+# write to result csv
 print("write results to file ... ", end="")
 results.append(patientID)
 if 'exec_time' in locals(): results.append(exec_time)
