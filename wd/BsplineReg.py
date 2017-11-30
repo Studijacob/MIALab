@@ -22,7 +22,7 @@ def command_multi_iteration(method) :
 
 fixed = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz', sitk.sitkFloat32)
 
-moving = sitk.ReadImage('../data/test/100307/T1native.nii.gz', sitk.sitkFloat32)
+moving = sitk.ReadImage('../data/test/899885/T1native.nii.gz', sitk.sitkFloat32)
 
 transformDomainMeshSize=[10]*moving.GetDimension()
 tx = sitk.BSplineTransformInitializer(fixed,
