@@ -37,8 +37,8 @@ if(d3D):
     #Testing 3D
     dimensions = 3
     loadTransformation = False
-    PatientIDList = [100307, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
-    patientID = 100307
+    PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
+    patientID = 899885
     path = './experiment1/results.csv'
 
     # start the csv
@@ -50,10 +50,10 @@ if(d3D):
     print("load images ...", end="")
     fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
 
-    moving_image = sitk.ReadImage('../data/test/100307/T1native.nii.gz')
+    moving_image = sitk.ReadImage('../data/test/899885/T1native.nii.gz')
 
-    labels_native_image = sitk.ReadImage('../data/test/100307/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('../data/test/100307/labels_mniatlas.nii.gz')
+    labels_native_image = sitk.ReadImage('../data/test/899885/labels_native.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('../data/test/899885/labels_mniatlas.nii.gz')
     print(" done")
 
     # Do several registrations:
