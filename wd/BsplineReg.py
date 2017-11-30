@@ -54,7 +54,7 @@ print("Optimizer stop condition: {0}".format(R.GetOptimizerStopConditionDescript
 print(" Iteration: {0}".format(R.GetOptimizerIteration()))
 print(" Metric value: {0}".format(R.GetMetricValue()))
 
-sitk.WriteTransform(outTx, './BsplineResults/')
+sitk.WriteTransform(outTx, './BsplineResults/transform.tfm')
 
 if ( not "SITK_NOSHOW" in os.environ ):
 
@@ -65,7 +65,11 @@ if ( not "SITK_NOSHOW" in os.environ ):
     resampler.SetTransform(outTx)
 
     out = resampler.Execute(moving)
-    simg1 = sitk.Cast(sitk.RescaleIntensity(fixed), sitk.sitkUInt8)
-    simg2 = sitk.Cast(sitk.RescaleIntensity(out), sitk.sitkUInt8)
-    cimg = sitk.Compose(simg1, simg2, simg1//2.+simg2//2.)
-    sitk.Show( cimg, "ImageRegistration1 Composition" )
+
+    # Save the images:
+    sitk.WriteImage(out, './BsplineResults/myOut.nii.gz')
+
+    #simg1 = sitk.Cast(sitk.RescaleIntensity(fixed), sitk.sitkUInt8)
+    #simg2 = sitk.Cast(sitk.RescaleIntensity(out), sitk.sitkUInt8)
+    #cimg = sitk.Compose(simg1, simg2, simg1//2.+simg2//2.)
+    #sitk.Show( cimg, "ImageRegistration1 Composition" )
