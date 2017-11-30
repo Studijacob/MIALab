@@ -75,10 +75,12 @@ registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_hi
                                         smoothing_sigmas=my_smoothing_sigmas,
                                         sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
 parameters = R.MultiModalRegistrationParams(fixed_image)
+print("done")
 
 print("initialize bspline transformation ... ", end="")
 registrationB = R.BSplineRegistration()
 parametersB = R.BSplineRegistrationParams(fixed_image)
+print("done")
 
 print("calculate Multi transformation ...", end="", flush=True)
 
