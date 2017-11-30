@@ -84,17 +84,21 @@ class BSplineRegistration(fltr.IFilter):
 
         registration = sitk.ImageRegistrationMethod()
 
+        # Similarity metric settings.
         registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
+        registration.SetMetricSamplingStrategy(registration.RANDOM)
+        registration.SetMetricSamplingPercentage(0.01)
 
-        # interpolator
-        # will evaluate the intensities of the moving image at non-rigid positions
         registration.SetInterpolator(sitk.sitkLinear)
-        registration.SetOptimizerAsGradientDescentLineSearch(5.0, 100,convergenceMinimumValue = 1e-4,convergenceWindowSize = 5)
+
+        # Optimizer settings.
+        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=1.0, numberOfIterations=100, convergenceMinimumValue=1e-6, convergenceWindowSize=10)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
         registration.SetShrinkFactorsPerLevel(self.shrink_factors)
         registration.SetSmoothingSigmasPerLevel(self.smoothing_sigmas)
+        registration.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
         self.registration = registration
 
