@@ -127,7 +127,6 @@ class BSplineRegistration(fltr.IFilter):
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
-        self.registration.SetTransform
 
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
                                                    sitk.Cast(image, sitk.sitkFloat32))
