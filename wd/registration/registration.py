@@ -45,7 +45,7 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 1500,
+                 number_of_iterations: int = 200,
                  number_of_bins: int = 200,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
