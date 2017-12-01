@@ -26,7 +26,7 @@ moving = sitk.ReadImage('../data/test/899885/T1native.nii.gz', sitk.sitkFloat32)
 
 transformDomainMeshSize=[10]*moving.GetDimension()
 tx = sitk.BSplineTransformInitializer(fixed,
-                                      transformDomainMeshSize )
+                                      transformDomainMeshSize)
 
 print("Initial Parameters:");
 print(tx.GetParameters())
