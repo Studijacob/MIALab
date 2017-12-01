@@ -45,7 +45,7 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 500,
+                 number_of_iterations: int = 1000,
                  number_of_bins: int = 100,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
@@ -98,7 +98,7 @@ class BSplineRegistration(fltr.IFilter):
         registration.SetInterpolator(sitk.sitkLinear)
 
         # Optimizer settings.
-        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.1, numberOfIterations=self.number_of_iterations)
+        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.01, numberOfIterations=self.number_of_iterations)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
@@ -123,7 +123,7 @@ class BSplineRegistration(fltr.IFilter):
             raise ValueError("params is not defined")
 
         # transformDomainMeshSize = [10] * image.GetDimension()
-        transformDomainMeshSize = [14,10,12]
+        transformDomainMeshSize = [16,11,13]
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
