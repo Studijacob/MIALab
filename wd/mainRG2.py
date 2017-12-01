@@ -88,10 +88,10 @@ print("calculate Multi transformation ...", end="", flush=True)
 
 # Register the moving image and create the corresponding transformation during execute:
 start = time.time()
-registered_image = registration.execute(moving_image, parameters)
+registered_multi = registration.execute(moving_image, parameters)
 print(" done")
 print("calculate bspline transformation ...", end="", flush=True)
-registered_image = registrationB.execute(registered_image, parametersB)
+registered_b = registrationB.execute(registered_multi, parametersB)
 exec_time = time.time() - start
 print("done")
 
@@ -121,4 +121,5 @@ file.close()
 print("done")
 
 # Save the images:
-sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
+sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')

@@ -136,7 +136,7 @@ if(d3D):
         print("done")
 
         # Save the images:
-        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+        sitk.WriteImage(registered_image, 'myRegistredMulti.nii.gz')
         # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
