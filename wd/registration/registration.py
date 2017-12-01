@@ -91,10 +91,10 @@ class BSplineRegistration(fltr.IFilter):
         registration = sitk.ImageRegistrationMethod()
 
         # Similarity metric settings.
-        # registration.SetMetricAsCorrelation()
-        registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
-        registration.SetMetricSamplingStrategy(registration.RANDOM)
-        registration.SetMetricSamplingPercentage(0.001)
+        registration.SetMetricAsCorrelation()
+        # registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
+        # registration.SetMetricSamplingStrategy(registration.RANDOM)
+        # registration.SetMetricSamplingPercentage(0.001)
 
         registration.SetInterpolator(sitk.sitkLinear)
 
@@ -129,7 +129,7 @@ class BSplineRegistration(fltr.IFilter):
             raise ValueError("params is not defined")
 
         # transformDomainMeshSize = [10] * image.GetDimension()
-        transformDomainMeshSize = [20,20,20]
+        transformDomainMeshSize = [5,5,5]
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         self.registration.SetInitialTransform(initial_transform, inPlace=True)

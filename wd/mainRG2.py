@@ -98,7 +98,8 @@ print("done")
 print('Total exection time: {}'.format(exec_time))
 
 # Save transformaiton:
-# sitk.WriteTransform(registration.transform, './Transformations/myTransformation.tfm')
+sitk.WriteTransform(registrationM.transform, './Transformations/myTransformationM.tfm')
+sitk.WriteTransform(registrationB.transform, './Transformations/myTransformationB.tfm')
 
 # Evaluate transformation:
 print("evaluating ... ", end="")
