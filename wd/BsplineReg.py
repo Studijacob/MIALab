@@ -24,12 +24,14 @@ fixed = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz', s
 
 moving = sitk.ReadImage('../data/test/899885/T1native.nii.gz', sitk.sitkFloat32)
 
-transformDomainMeshSize=[10]*moving.GetDimension()
-tx = sitk.BSplineTransformInitializer(fixed,
-                                      transformDomainMeshSize)
+# Set Basis Spline Mesh size in all 3 dimensions: x, y, z
+transformDomainMeshSize = [14, 10, 12]
+
+# Create BsplineTransform class from fixed-image and defined mesh-size:
+tx_BsplineTransform = sitk.BSplineTransformInitializer(fixed,transformDomainMeshSize)
 
 print("Initial Parameters:");
-print(tx.GetParameters())
+print(tx_BsplineTransform.GetParameters())
 
 R = sitk.ImageRegistrationMethod()
 R.SetMetricAsMattesMutualInformation(50)
@@ -37,7 +39,7 @@ R.SetOptimizerAsGradientDescentLineSearch(5.0, 100,
                                           convergenceMinimumValue=1e-4,
                                           convergenceWindowSize=5)
 R.SetOptimizerScalesFromPhysicalShift( )
-R.SetInitialTransform(tx)
+R.SetInitialTransform(tx_BsplineTransform)
 R.SetInterpolator(sitk.sitkLinear)
 
 R.SetShrinkFactorsPerLevel([6,2,1])
