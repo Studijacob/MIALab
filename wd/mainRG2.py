@@ -103,6 +103,8 @@ print('Total exection time: {}'.format(exec_time))
 # Evaluate transformation:
 print("evaluating ... ", end="")
 # Apply the transformation to the native lables image:
+resultsA = evaluator.evaluate(labels_native_image, labels_mni_atlas)
+
 labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, sitk.sitkLinear, 0.0,
                                  labels_native_image.GetPixelIDValue())
 resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
@@ -112,6 +114,7 @@ labels_registredB = sitk.Resample(labels_registredM, registrationB.transform, si
 results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
 
 print("done")
+print("Begin: ",resultsA)
 print("multi: ",resultsM)
 print("bspline", results)
 
