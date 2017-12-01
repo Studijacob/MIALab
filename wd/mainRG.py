@@ -68,7 +68,7 @@ if(d3D):
             # Define registration method:
             my_registration_type = RegistrationType.AFFINE
             my_number_of_histogram_bins = i # int
-            my_learning_rate = 1.0 # float
+            my_learning_rate = 0.01 # float
             my_step_size = 0.001 # float
             my_number_of_iterations = 200 # int
             my_relaxation_factor = 0.5 # int

@@ -45,8 +45,8 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 100,
-                 number_of_bins: int = 50,
+                 number_of_iterations: int = 500,
+                 number_of_bins: int = 100,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 5,
                  max_number_of_function_evaluations: int = 1000,
@@ -76,17 +76,17 @@ class BSplineRegistration(fltr.IFilter):
         if len(shrink_factors) != len(smoothing_sigmas):
             raise ValueError("shrink_factors and smoothing_sigmas need to be same length")
 
-        self.max_number_of_corrections = max_number_of_corrections
-        self.max_number_of_function_evaluations = max_number_of_function_evaluations
-        self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
-        self.cost_function_convergence_factor = cost_function_convergence_factor
         self.number_of_iterations = number_of_iterations
         self.number_of_bins = number_of_bins
         self.shrink_factors = shrink_factors
         self.smoothing_sigmas = smoothing_sigmas
-        self.max_number_step_lenght = max_number_step_lenght
-        self.min_number_step_lenght = min_number_step_lenght # SetOptimizerAsRegularStepGradientDescent
-        self.relaxation_factor = relaxation_factor # SetOptimizerAsRegularStepGradientDescent
+        # self.max_number_of_corrections = max_number_of_corrections
+        # self.max_number_of_function_evaluations = max_number_of_function_evaluations
+        # self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
+        # self.cost_function_convergence_factor = cost_function_convergence_factor
+        # self.max_number_step_lenght = max_number_step_lenght
+        # self.min_number_step_lenght = min_number_step_lenght # SetOptimizerAsRegularStepGradientDescent
+        # self.relaxation_factor = relaxation_factor # SetOptimizerAsRegularStepGradientDescent
 
         registration = sitk.ImageRegistrationMethod()
 
@@ -98,7 +98,7 @@ class BSplineRegistration(fltr.IFilter):
         registration.SetInterpolator(sitk.sitkLinear)
 
         # Optimizer settings.
-        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=1.0, numberOfIterations=self.number_of_iterations)
+        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.1, numberOfIterations=self.number_of_iterations)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
@@ -123,7 +123,7 @@ class BSplineRegistration(fltr.IFilter):
             raise ValueError("params is not defined")
 
         # transformDomainMeshSize = [10] * image.GetDimension()
-        transformDomainMeshSize = [5,5,5]
+        transformDomainMeshSize = [14,10,12]
         initial_transform = sitk.BSplineTransformInitializer(params.fixed_image, transformDomainMeshSize)
 
         self.registration.SetInitialTransform(initial_transform, inPlace=True)
