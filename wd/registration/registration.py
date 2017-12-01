@@ -45,10 +45,10 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 1000,
-                 number_of_bins: int = 100,
+                 number_of_iterations: int = 1500,
+                 number_of_bins: int = 200,
                  gradient_Convergence_Tolerance: float = 1e-5,
-                 max_number_of_corrections: int = 5,
+                 max_number_of_corrections: int = 10,
                  max_number_of_function_evaluations: int = 1000,
                  max_number_step_lenght: float = 0.05,
                  min_number_step_lenght: float = 0.001,
@@ -91,10 +91,10 @@ class BSplineRegistration(fltr.IFilter):
         registration = sitk.ImageRegistrationMethod()
 
         # Similarity metric settings.
-        registration.SetMetricAsCorrelation()
-        # registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
-        # registration.SetMetricSamplingStrategy(registration.RANDOM)
-        # registration.SetMetricSamplingPercentage(0.001)
+        # registration.SetMetricAsCorrelation()
+        registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
+        registration.SetMetricSamplingStrategy(registration.RANDOM)
+        registration.SetMetricSamplingPercentage(0.001)
 
         registration.SetInterpolator(sitk.sitkLinear)
 

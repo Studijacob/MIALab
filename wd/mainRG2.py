@@ -68,7 +68,7 @@ my_shrink_factors = (2, 1, 1)  # [int]
 my_smoothing_sigmas = (2, 1, 0)  # [float]
 my_sampling_percentage = 0.2  # float
 
-registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
+registrationM = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
                                         learning_rate=my_learning_rate,
                                         step_size=my_step_size,
                                         number_of_iterations=my_number_of_iterations,
@@ -76,7 +76,7 @@ registration = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_hi
                                         shrink_factors=my_shrink_factors,
                                         smoothing_sigmas=my_smoothing_sigmas,
                                         sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
-parameters = R.MultiModalRegistrationParams(fixed_image)
+parametersM = R.MultiModalRegistrationParams(fixed_image)
 print("done")
 
 print("initialize bspline transformation ... ", end="")
@@ -88,7 +88,7 @@ print("calculate Multi transformation ...", end="", flush=True)
 
 # Register the moving image and create the corresponding transformation during execute:
 start = time.time()
-registered_multi = registration.execute(moving_image, parameters)
+registered_multi = registrationM.execute(moving_image, parametersM)
 print(" done")
 print("calculate bspline transformation ...", end="", flush=True)
 registered_b = registrationB.execute(registered_multi, parametersB)
@@ -98,17 +98,22 @@ print("done")
 print('Total exection time: {}'.format(exec_time))
 
 # Save transformaiton:
-sitk.WriteTransform(registration.transform, './Transformations/myTransformation.tfm')
-
-# Apply the transformation to the native lables image:
-labels_registred = sitk.Resample(labels_native_image, registration.transform, sitk.sitkLinear, 0.0,
-                                 labels_native_image.GetPixelIDValue())
+# sitk.WriteTransform(registration.transform, './Transformations/myTransformation.tfm')
 
 # Evaluate transformation:
 print("evaluating ... ", end="")
-# results = evaluator.evaluate(labels_registred,labels_mni_atlas)
-results = evaluator.evaluate(labels_registred, labels_mni_atlas)
+# Apply the transformation to the native lables image:
+labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, sitk.sitkLinear, 0.0,
+                                 labels_native_image.GetPixelIDValue())
+resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
+
+labels_registredB = sitk.Resample(labels_native_image, registrationB.transform, sitk.sitkLinear, 0.0,
+                                 labels_native_image.GetPixelIDValue())
+results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
+
 print("done")
+print("multi: ",resultsM)
+print("bspline", results)
 
 # write to result csv
 print("write results to file ... ", end="")
