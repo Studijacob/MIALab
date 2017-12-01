@@ -80,10 +80,10 @@ class BSplineRegistration(fltr.IFilter):
         self.number_of_bins = number_of_bins
         self.shrink_factors = shrink_factors
         self.smoothing_sigmas = smoothing_sigmas
-        # self.max_number_of_corrections = max_number_of_corrections
-        # self.max_number_of_function_evaluations = max_number_of_function_evaluations
-        # self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
-        # self.cost_function_convergence_factor = cost_function_convergence_factor
+        self.max_number_of_corrections = max_number_of_corrections
+        self.max_number_of_function_evaluations = max_number_of_function_evaluations
+        self.cost_function_convergence_factor = cost_function_convergence_factor
+        self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
         # self.max_number_step_lenght = max_number_step_lenght
         # self.min_number_step_lenght = min_number_step_lenght # SetOptimizerAsRegularStepGradientDescent
         # self.relaxation_factor = relaxation_factor # SetOptimizerAsRegularStepGradientDescent
@@ -91,14 +91,20 @@ class BSplineRegistration(fltr.IFilter):
         registration = sitk.ImageRegistrationMethod()
 
         # Similarity metric settings.
-        registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
-        registration.SetMetricSamplingStrategy(registration.RANDOM)
-        registration.SetMetricSamplingPercentage(0.001)
+        registration.SetMetricAsCorrelation()
+        # registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
+        # registration.SetMetricSamplingStrategy(registration.RANDOM)
+        # registration.SetMetricSamplingPercentage(0.001)
 
         registration.SetInterpolator(sitk.sitkLinear)
 
         # Optimizer settings.
-        registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.01, numberOfIterations=self.number_of_iterations)
+        #registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.01, numberOfIterations=self.number_of_iterations)
+        registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=self.gradient_Convergence_Tolerance,
+                               numberOfIterations=self.number_of_iterations,
+                               maximumNumberOfCorrections=self.max_number_of_corrections,
+                               maximumNumberOfFunctionEvaluations=self.max_number_of_function_evaluations,
+                               costFunctionConvergenceFactor=self.cost_function_convergence_factor)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
