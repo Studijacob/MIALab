@@ -108,9 +108,9 @@ class BSplineRegistration(fltr.IFilter):
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
-        registration.SetShrinkFactorsPerLevel(self.shrink_factors)
-        registration.SetSmoothingSigmasPerLevel(self.smoothing_sigmas)
-        registration.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
+        # registration.SetShrinkFactorsPerLevel(self.shrink_factors)
+        # registration.SetSmoothingSigmasPerLevel(self.smoothing_sigmas)
+        # registration.SmoothingSigmasAreSpecifiedInPhysicalUnitsOn()
 
         self.registration = registration
 
