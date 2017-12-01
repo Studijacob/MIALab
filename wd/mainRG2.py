@@ -107,7 +107,7 @@ labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, 
                                  labels_native_image.GetPixelIDValue())
 resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
 
-labels_registredB = sitk.Resample(labels_native_image, registrationB.transform, sitk.sitkLinear, 0.0,
+labels_registredB = sitk.Resample(labels_registredM, registrationB.transform, sitk.sitkLinear, 0.0,
                                  labels_native_image.GetPixelIDValue())
 results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
 
