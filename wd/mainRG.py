@@ -48,12 +48,13 @@ if(d3D):
 
     # Read in the images:
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    #fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/test/208226/T1mni.nii.gz')
 
     moving_image = sitk.ReadImage('../data/test/899885/T1native.nii.gz')
 
     labels_native_image = sitk.ReadImage('../data/test/899885/labels_native.nii.gz')
-    labels_mni_atlas = sitk.ReadImage('../data/test/899885/labels_mniatlas.nii.gz')
+    labels_mni_atlas = sitk.ReadImage('../data/test/208226/labels_mniatlas.nii.gz')
     print(" done")
 
     # Do several registrations:
@@ -67,7 +68,7 @@ if(d3D):
             # Define registration method:
             my_registration_type = RegistrationType.AFFINE
             my_number_of_histogram_bins = i # int
-            my_learning_rate = 1.0 # float
+            my_learning_rate = 0.01 # float
             my_step_size = 0.001 # float
             my_number_of_iterations = 200 # int
             my_relaxation_factor = 0.5 # int
@@ -135,7 +136,7 @@ if(d3D):
         print("done")
 
         # Save the images:
-        sitk.WriteImage(registered_image, 'myRegistred2.nii.gz')
+        sitk.WriteImage(registered_image, 'myRegistredMulti.nii.gz')
         # sitk.WriteImage(labels_registred, 'myRegistred_labels.nii.gz')
         # sitk.WriteImage(subtracted_image, 'mySubtracted_labels.nii.gz')
 
