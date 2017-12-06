@@ -78,12 +78,12 @@ class BSplineRegistration(fltr.IFilter):
 
         self.number_of_iterations = number_of_iterations
         self.number_of_bins = number_of_bins
-        self.shrink_factors = shrink_factors
-        self.smoothing_sigmas = smoothing_sigmas
         self.max_number_of_corrections = max_number_of_corrections
         self.max_number_of_function_evaluations = max_number_of_function_evaluations
         self.cost_function_convergence_factor = cost_function_convergence_factor
         self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
+        # self.shrink_factors = shrink_factors
+        # self.smoothing_sigmas = smoothing_sigmas
         # self.max_number_step_lenght = max_number_step_lenght
         # self.min_number_step_lenght = min_number_step_lenght # SetOptimizerAsRegularStepGradientDescent
         # self.relaxation_factor = relaxation_factor # SetOptimizerAsRegularStepGradientDescent
@@ -99,7 +99,6 @@ class BSplineRegistration(fltr.IFilter):
         registration.SetInterpolator(sitk.sitkLinear)
 
         # Optimizer settings.
-        #registration.SetOptimizerAsGradientDescentLineSearch(learningRate=0.01, numberOfIterations=self.number_of_iterations)
         registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=self.gradient_Convergence_Tolerance,
                                numberOfIterations=self.number_of_iterations,
                                maximumNumberOfCorrections=self.max_number_of_corrections,
