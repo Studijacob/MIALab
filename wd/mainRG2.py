@@ -84,7 +84,7 @@ registrationB = R.BSplineRegistration()
 parametersB = R.BSplineRegistrationParams(fixed_image)
 print("done")
 
-print("calculate Multi transformation ...", end="", flush=True)
+print("calculate affine transformation ...", end="", flush=True)
 
 # Register the moving image and create the corresponding transformation during execute:
 start = time.time()
