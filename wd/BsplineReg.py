@@ -37,7 +37,7 @@ print(tx_BsplineTransform.GetParameters())
 # Create our Image-Registration-Method:
 R = sitk.ImageRegistrationMethod()
 
-# Set the metric used in our Image-Registration-Method:
+# Set the metric used in our Image-Registration-Method and define the number of histogram bins = 50:
 R.SetMetricAsMattesMutualInformation(50)
 
 # Set the Optimizer used in our Image-Registration-Method:
