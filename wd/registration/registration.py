@@ -45,7 +45,7 @@ class BSplineRegistrationParams(fltr.IFilterParams):
 class BSplineRegistration(fltr.IFilter):
 
     def __init__(self,
-                 number_of_iterations: int = 1500,
+                 number_of_iterations: int = 500,
                  number_of_bins: int = 200,
                  gradient_Convergence_Tolerance: float = 1e-5,
                  max_number_of_corrections: int = 10,
@@ -93,8 +93,8 @@ class BSplineRegistration(fltr.IFilter):
         # Similarity metric settings.
         registration.SetMetricAsCorrelation()
         # registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
-        # registration.SetMetricSamplingStrategy(registration.RANDOM)
-        # registration.SetMetricSamplingPercentage(0.001)
+        registration.SetMetricSamplingStrategy(registration.RANDOM)
+        registration.SetMetricSamplingPercentage(0.2)
 
         registration.SetInterpolator(sitk.sitkLinear)
 
