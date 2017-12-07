@@ -106,6 +106,9 @@ class BSplineRegistration(fltr.IFilter):
                                costFunctionConvergenceFactor=self.cost_function_convergence_factor)
         registration.SetOptimizerScalesFromPhysicalShift()
 
+        # Print command
+        registration.AddCommand(sitk.sitkIterationEvent, lambda: print("\t#: ", len(registration.GetOptimizerPosition())))
+
         # setup for the multi-resolution framework
         # registration.SetShrinkFactorsPerLevel(self.shrink_factors)
         # registration.SetSmoothingSigmasPerLevel(self.smoothing_sigmas)
