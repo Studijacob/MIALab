@@ -139,8 +139,8 @@ class BSplineRegistration(fltr.IFilter):
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
                                                    sitk.Cast(image, sitk.sitkFloat32))
 
-        # return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
-        return sitk.Resample(params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+        return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
+        # return sitk.Resample(params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
 
 
 class MultiModalRegistrationParams(fltr.IFilterParams):
