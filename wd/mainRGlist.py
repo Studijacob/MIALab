@@ -47,6 +47,7 @@ PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655,
 for patientID in PatientIDList:
 
     # Read in the images:
+    print("PatientID:", patientID)
     print("load images ...", end="")
     fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
     moving_image = sitk.ReadImage('../data/test/'+str(patientID)+'/T1native.nii.gz')

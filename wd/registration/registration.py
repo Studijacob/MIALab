@@ -94,7 +94,7 @@ class BSplineRegistration(fltr.IFilter):
         # registration.SetMetricAsCorrelation()
         registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
         registration.SetMetricSamplingStrategy(registration.RANDOM)
-        registration.SetMetricSamplingPercentage(0.2)
+        registration.SetMetricSamplingPercentage(0.002)
 
         registration.SetInterpolator(sitk.sitkLinear)
 
@@ -107,7 +107,7 @@ class BSplineRegistration(fltr.IFilter):
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # Print command
-        registration.AddCommand(sitk.sitkIterationEvent, lambda: print("\t#: ", len(registration.GetOptimizerPosition())))
+        # registration.AddCommand(sitk.sitkIterationEvent, lambda: print("\t#: ", len(registration.GetOptimizerPosition())))
 
         # setup for the multi-resolution framework
         # registration.SetShrinkFactorsPerLevel(self.shrink_factors)
@@ -188,7 +188,7 @@ class MultiModalRegistration(fltr.IFilter):
                  relaxation_factor: float=0.5,
                  shrink_factors: [int]=(2, 1, 1),
                  smoothing_sigmas: [float]=(2, 1, 0),
-                 sampling_percentage: float=0.2):
+                 sampling_percentage: float=0.002):
         """Initializes a new instance of the MultiModalRegistration class.
 
         Args:
