@@ -130,5 +130,5 @@ file.close()
 print("done")
 
 # Save the images:
-sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
-sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')
+# sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
+# sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')

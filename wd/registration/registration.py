@@ -91,8 +91,8 @@ class BSplineRegistration(fltr.IFilter):
         registration = sitk.ImageRegistrationMethod()
 
         # Similarity metric settings.
-        registration.SetMetricAsCorrelation()
-        # registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
+        # registration.SetMetricAsCorrelation()
+        registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
         registration.SetMetricSamplingStrategy(registration.RANDOM)
         registration.SetMetricSamplingPercentage(0.2)
 
