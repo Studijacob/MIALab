@@ -54,8 +54,7 @@ class BSplineRegistration(fltr.IFilter):
                  min_number_step_lenght: float = 0.001,
                  relaxation_factor: float = 0.5,
                  cost_function_convergence_factor: float = 1e+7,
-                 shrink_factors: [int] = (6, 2, 1),
-                 smoothing_sigmas: [float] = (6, 2, 0)):
+                 sampling_percentage: float = 0.002):
         """Initializes a new instance of the MultiModalRegistration class.
 
         Args:
@@ -73,15 +72,13 @@ class BSplineRegistration(fltr.IFilter):
         """
         super().__init__()
 
-        if len(shrink_factors) != len(smoothing_sigmas):
-            raise ValueError("shrink_factors and smoothing_sigmas need to be same length")
-
         self.number_of_iterations = number_of_iterations
         self.number_of_bins = number_of_bins
         self.max_number_of_corrections = max_number_of_corrections
         self.max_number_of_function_evaluations = max_number_of_function_evaluations
         self.cost_function_convergence_factor = cost_function_convergence_factor
         self.gradient_Convergence_Tolerance = gradient_Convergence_Tolerance
+        self.sampling_percentage = sampling_percentage
         # self.shrink_factors = shrink_factors
         # self.smoothing_sigmas = smoothing_sigmas
         # self.max_number_step_lenght = max_number_step_lenght
@@ -92,11 +89,13 @@ class BSplineRegistration(fltr.IFilter):
 
         # Similarity metric settings.
         # registration.SetMetricAsCorrelation()
+        # registration.SetMetricAsJointHistogramMutualInformation(self.number_of_histogram_bins, 1.5)
         registration.SetMetricAsMattesMutualInformation(self.number_of_bins)
         registration.SetMetricSamplingStrategy(registration.RANDOM)
-        registration.SetMetricSamplingPercentage(0.002)
+        registration.SetMetricSamplingPercentage(self.sampling_percentage)
 
-        registration.SetInterpolator(sitk.sitkLinear)
+        # registration.SetInterpolator(sitk.sitkLinear)
+        registration.SetInterpolator(sitk.sitkBSpline)
 
         # Optimizer settings.
         registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=self.gradient_Convergence_Tolerance,
@@ -142,6 +141,7 @@ class BSplineRegistration(fltr.IFilter):
         # return sitk.Resample(image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
         return sitk.Resample(image, params.fixed_image, self.transform, sitk.sitkLinear, 0.0, image.GetPixelIDValue())
 
+
 class MultiModalRegistrationParams(fltr.IFilterParams):
     """Represents parameters for the multi-modal rigid registration."""
 
@@ -181,13 +181,13 @@ class MultiModalRegistration(fltr.IFilter):
 
     def __init__(self,
                  registration_type: RegistrationType=RegistrationType.AFFINE, #RegistrationType.RIGID,
-                 number_of_histogram_bins: int=200,
+                 number_of_histogram_bins: int=50,
                  learning_rate: float=1.0,
                  step_size: float=0.001,
                  number_of_iterations: int=200,
                  relaxation_factor: float=0.5,
-                 shrink_factors: [int]=(2, 1, 1),
-                 smoothing_sigmas: [float]=(2, 1, 0),
+                 shrink_factors: [int]=(4, 2, 1),
+                 smoothing_sigmas: [float]=(4, 2, 0),
                  sampling_percentage: float=0.002):
         """Initializes a new instance of the MultiModalRegistration class.
 
@@ -289,9 +289,6 @@ class MultiModalRegistration(fltr.IFilter):
         if params.fixed_image_mask:
             self.registration.SetMetricFixedMask(params.fixed_image_mask)
 
-        if params.plot_directory_path:
-            RegistrationPlotter(self.registration, params.fixed_image, image, initial_transform, params.plot_directory_path)
-
         self.transform = self.registration.Execute(sitk.Cast(params.fixed_image, sitk.sitkFloat32),
                                                    sitk.Cast(image, sitk.sitkFloat32))
 
@@ -323,114 +320,3 @@ class MultiModalRegistration(fltr.IFilter):
                ' smoothing_sigmas:         {self.smoothing_sigmas}\n' \
                ' sampling_percentage:      {self.sampling_percentage}\n' \
             .format(self=self)
-
-
-class RegistrationPlotter:
-    """Represents a plotter for SimpleITK registrations."""
-
-    def __init__(self, registration: sitk.ImageRegistrationMethod,
-                 fixed_image: sitk.Image,
-                 image: sitk.Image,
-                 transform: sitk.Transform,
-                 path: str):
-        """
-
-        Args:
-            registration (sitk.ImageRegistrationMethod): The registration method.
-            fixed_image (sitk.Image): The fixed image.
-            image (sitk.Image): The moving image.
-            transform (sitk.Transform): The transformation.
-            path (str): Path to the directory where to save the plots.
-        """
-        self.metric_values = []
-        self.multires_iterations = []
-
-        registration.AddCommand(sitk.sitkStartEvent, self._start_plot)
-        registration.AddCommand(sitk.sitkEndEvent, self._end_plot)
-        registration.AddCommand(sitk.sitkMultiResolutionIterationEvent, self._update_multiresolution_iterations)
-        registration.AddCommand(sitk.sitkIterationEvent, lambda: self._save_plot(registration,
-                                                                                 fixed_image,
-                                                                                 image,
-                                                                                 transform,
-                                                                                 path))
-
-    def _end_plot(self):
-        """Callback for the EndEvent."""
-        plt.close()
-
-    def _start_plot(self):
-        """Callback for the StartEvent."""
-        self.metric_values = []
-        self.multires_iterations = []
-
-    def _update_multiresolution_iterations(self):
-        """Callback for the MultiResolutionIterationEvent."""
-        self.multires_iterations.append(len(self.metric_values))
-
-    def _save_plot(self, registration_method, fixed, moving, transform, file_name_prefix):
-        """Callback for the IterationEvent.
-
-        Saves an image including the visualization of the registered images and the metric value plot.
-        """
-
-        self.metric_values.append(registration_method.GetMetricValue())
-        # Plot the similarity metric values; resolution changes are marked with a blue star
-        plt.plot(self.metric_values, 'r')
-        plt.plot(self.multires_iterations, [self.metric_values[index] for index in self.multires_iterations], 'b*')
-        plt.xlabel('Iteration', fontsize=12)
-        plt.ylabel('Metric Value', fontsize=12)
-
-        # todo(fabianbalsiger): format precision of legends
-        # plt.axes().yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:2f}'))
-        # plt.axes().xaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:d}'))
-        # _, ax = plt.subplots()
-        # ax.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:f2}'))
-
-        # todo(fabianbalsiger): add margin to the left side of the plot
-
-        # Convert the plot to a SimpleITK image (works with the agg matplotlib backend, doesn't work
-        # with the default - the relevant method is canvas_tostring_rgb())
-        plt.gcf().canvas.draw()
-        plot_data = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
-        plot_data = plot_data.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,)) #dimenstion
-        plot_image = sitk.GetImageFromArray(plot_data, isVector=True)
-
-        # Extract the central axial slice from the two volumes, compose it using the transformation and alpha blend it
-        alpha = 1.0
-
-        central_index = round((fixed.GetSize())[2] / 2)
-
-        moving_transformed = sitk.Resample(moving, fixed, transform,
-                                           sitk.sitkLinear, 0.0,
-                                           moving.GetPixelIDValue())
-        # Extract the central slice in xy and alpha blend them
-        combined = (1.0 - alpha) * sitk.Normalize(fixed[:, :, central_index]) + \
-                   alpha * sitk.Normalize(moving_transformed[:, :, central_index])
-
-        # Assume the alpha blended images are isotropic and rescale intensity
-        # values so that they are in [0,255], convert the grayscale image to
-        # color (r,g,b).
-        combined_slices_image = sitk.Cast(sitk.RescaleIntensity(combined), sitk.sitkUInt8)
-        combined_slices_image = sitk.Compose(combined_slices_image,
-                                             combined_slices_image,
-                                             combined_slices_image)
-
-        self._write_combined_image(combined_slices_image, plot_image,
-                                   file_name_prefix + format(len(self.metric_values), '03d') + '.png')
-
-    def _write_combined_image(self, image1, image2, file_name):
-        """Writes an image including the visualization of the registered images and the metric value plot."""
-        combined_image = sitk.Image((image1.GetWidth() + image2.GetWidth(), max(image1.GetHeight(), image2.GetHeight())),
-                                    image1.GetPixelID(), image1.GetNumberOfComponentsPerPixel())
-
-        image1_destination = [0, 0]
-        image2_destination = [image1.GetWidth(), 0]
-
-        if image1.GetHeight() > image2.GetHeight():
-            image2_destination[1] = round((combined_image.GetHeight() - image2.GetHeight()) / 2)
-        else:
-            image1_destination[1] = round((combined_image.GetHeight() - image1.GetHeight()) / 2)
-
-        combined_image = sitk.Paste(combined_image, image1, image1.GetSize(), (0, 0), image1_destination)
-        combined_image = sitk.Paste(combined_image, image2, image2.GetSize(), (0, 0), image2_destination)
-        sitk.WriteImage(combined_image, file_name)

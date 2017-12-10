@@ -12,15 +12,10 @@ from enum import Enum
 import matplotlib
 
 matplotlib.use('Agg')  # use matplotlib without having a window appear
-import matplotlib.pyplot as plt
-import numpy as np
 import SimpleITK as sitk
 import time
 import csv
-import os.path
 
-import mialab.utilities.pipeline_utilities as putil
-import mialab.filtering.filter as fltr
 import registration.registration as R
 import registration.evalor as E
 
@@ -57,24 +52,7 @@ for patientID in PatientIDList:
     print(" done")
 
     print("initialize multimodal transformation ... ", end="")
-    # Define registration method:
-    my_number_of_histogram_bins = 200  # int
-    my_learning_rate = 0.10  # float
-    my_step_size = 0.001  # float
-    my_number_of_iterations = 200  # int
-    my_relaxation_factor = 0.5  # int
-    my_shrink_factors = (2, 1, 1)  # [int]
-    my_smoothing_sigmas = (2, 1, 0)  # [float]
-    my_sampling_percentage = 0.2  # float
-
-    registrationM = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
-                                             learning_rate=my_learning_rate,
-                                             step_size=my_step_size,
-                                             number_of_iterations=my_number_of_iterations,
-                                             relaxation_factor=my_relaxation_factor,
-                                             shrink_factors=my_shrink_factors,
-                                             smoothing_sigmas=my_smoothing_sigmas,
-                                             sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
+    registrationM = R.MultiModalRegistration()
     parametersM = R.MultiModalRegistrationParams(fixed_image)
     print("done")
 
