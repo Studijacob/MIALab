@@ -68,13 +68,13 @@ for patientID in PatientIDList:
     my_sampling_percentage = 0.2  # float
 
     registrationM = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
-                                            learning_rate=my_learning_rate,
-                                            step_size=my_step_size,
-                                            number_of_iterations=my_number_of_iterations,
-                                            relaxation_factor=my_relaxation_factor,
-                                            shrink_factors=my_shrink_factors,
-                                            smoothing_sigmas=my_smoothing_sigmas,
-                                            sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
+                                             learning_rate=my_learning_rate,
+                                             step_size=my_step_size,
+                                             number_of_iterations=my_number_of_iterations,
+                                             relaxation_factor=my_relaxation_factor,
+                                             shrink_factors=my_shrink_factors,
+                                             smoothing_sigmas=my_smoothing_sigmas,
+                                             sampling_percentage=my_sampling_percentage)  # specify parameters to your needs
     parametersM = R.MultiModalRegistrationParams(fixed_image)
     print("done")
 
@@ -104,11 +104,11 @@ for patientID in PatientIDList:
     resultsA = evaluator.evaluate(labels_native_image, labels_mni_atlas)
 
     labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, sitk.sitkLinear, 0.0,
-                                     labels_native_image.GetPixelIDValue())
+                                      labels_native_image.GetPixelIDValue())
     resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
 
     labels_registredB = sitk.Resample(labels_registredM, registrationB.transform, sitk.sitkLinear, 0.0,
-                                     labels_native_image.GetPixelIDValue())
+                                      labels_native_image.GetPixelIDValue())
     results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
 
     print("done")
@@ -121,8 +121,8 @@ for patientID in PatientIDList:
     resultsA.append(patientID)
     resultsM.append(patientID)
     results.append(patientID)
+    if 'exec_time_m' in locals(): resultsM.append(exec_time_m)
     if 'exec_time_b' in locals(): results.append(exec_time_b)
-    if 'exec_time_m' in locals(): results.append(exec_time_m)
     file = open(path, "a")
     writer = csv.writer(file, delimiter=';')
     writer.writerow(resultsA)
