@@ -117,7 +117,7 @@ results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
 print("done")
 print("Begin: ",resultsA)
 print("affine: ",resultsM)
-print("bspline", results)
+print("bspline:", results)
 
 # write to result csv
 print("write results to file ... ", end="")

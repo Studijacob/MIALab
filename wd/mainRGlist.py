@@ -49,7 +49,8 @@ for patientID in PatientIDList:
     # Read in the images:
     print("PatientID:", patientID)
     print("load images ...", end="")
-    fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    #fixed_image = sitk.ReadImage('../data/atlas/mni_icbm152_t2_tal_nlin_sym_09a.nii.gz')
+    fixed_image = sitk.ReadImage('../data/test/'+str(patientID)+'/T1mni.nii.gz')
     moving_image = sitk.ReadImage('../data/test/'+str(patientID)+'/T1native.nii.gz')
     labels_native_image = sitk.ReadImage('../data/test/'+str(patientID)+'/labels_native.nii.gz')
     labels_mni_atlas = sitk.ReadImage('../data/test/'+str(patientID)+'/labels_mniatlas.nii.gz')
@@ -111,7 +112,7 @@ for patientID in PatientIDList:
     print("done")
     print("Begin: ",resultsA)
     print("affine: ",resultsM)
-    print("bspline", results)
+    print("bspline:", results)
 
     # write to result csv
     print("write results to file ... ", end="")
