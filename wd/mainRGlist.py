@@ -88,13 +88,15 @@ for patientID in PatientIDList:
     # Register the moving image and create the corresponding transformation during execute:
     start = time.time()
     registered_multi = registrationM.execute(moving_image, parametersM)
+    exec_time_m = time.time() - start
     print(" done")
     print("calculate bspline transformation ...", end="", flush=True)
+    start = time.time()
     registered_b = registrationB.execute(registered_multi, parametersB)
-    exec_time = time.time() - start
+    exec_time_b = time.time() - start
     print("done")
 
-    print('Total exection time: {}'.format(exec_time))
+    print('Total exection time: {}'.format(exec_time_b))
 
     # Evaluate transformation:
     print("evaluating ... ", end="")
@@ -116,10 +118,15 @@ for patientID in PatientIDList:
 
     # write to result csv
     print("write results to file ... ", end="")
+    resultsA.append(patientID)
+    resultsM.append(patientID)
     results.append(patientID)
-    if 'exec_time' in locals(): results.append(exec_time)
+    if 'exec_time_b' in locals(): results.append(exec_time_b)
+    if 'exec_time_m' in locals(): results.append(exec_time_m)
     file = open(path, "a")
     writer = csv.writer(file, delimiter=';')
+    writer.writerow(resultsA)
+    writer.writerow(resultsM)
     writer.writerow(results)
     file.close()
     print("done")
