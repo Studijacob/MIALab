@@ -102,7 +102,7 @@ for number_of_histogram_bins in histList:
                             resultsM.append(shrink_factors)
                             resultsM.append(smoothing_sigmas)
                             file = open(path, "a")
-                            writer = csv.writer(file, delimiter=';')
+                            writer = csv.writer(file, delimiter=';', lineterminator=';\r\n')
                             writer.writerow(resultsM)
                             file.close()
                             i += 1
