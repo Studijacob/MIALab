@@ -62,8 +62,6 @@ for patientID in PatientIDList:
     my_smoothing_sigmas = (2, 1, 0)  # [float]
     my_sampling_percentage = 0.2  # float
 
-    print("number of histogram bins:", my_number_of_histogram_bins, "")
-
     print("initialize multimodal transformation ... ", end="")
     registrationM = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
                                             learning_rate=my_learning_rate,
