@@ -98,8 +98,8 @@ print("done")
 print('Total exection time: {}'.format(exec_time))
 
 # Save transformaiton:
-sitk.WriteTransform(registrationM.transform, './Transformations/myTransformationM.tfm')
-sitk.WriteTransform(registrationB.transform, './Transformations/myTransformationB.tfm')
+# sitk.WriteTransform(registrationM.transform, './Transformations/myTransformationM.tfm')
+# sitk.WriteTransform(registrationB.transform, './Transformations/myTransformationB.tfm')
 
 # Evaluate transformation:
 print("evaluating ... ", end="")
@@ -130,5 +130,5 @@ file.close()
 print("done")
 
 # Save the images:
-# sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
-# sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')
+sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
+sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')
