@@ -54,7 +54,7 @@ class BSplineRegistration(fltr.IFilter):
                  min_number_step_lenght: float = 0.001,
                  relaxation_factor: float = 0.5,
                  cost_function_convergence_factor: float = 1e+7,
-                 sampling_percentage: float = 0.2):
+                 sampling_percentage: float = 0.02):
         """Initializes a new instance of the MultiModalRegistration class.
 
         Args:
