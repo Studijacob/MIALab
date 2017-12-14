@@ -241,18 +241,13 @@ class MultiModalRegistration(fltr.IFilter):
 
         # optimizer
         # is required to explore the parameter space of the transform in search of optimal values of the metric
-        # registration.SetOptimizerAsRegularStepGradientDescent(learningRate=self.learning_rate,
-        #                                                       minStep=self.step_size,
-        #                                                       numberOfIterations=self.number_of_iterations,
-        #                                                       relaxationFactor=self.relaxation_factor,
-        #                                                       gradientMagnitudeTolerance=1e-4,
-        #                                                       estimateLearningRate=registration.EachIteration,
-        #                                                       maximumStepSizeInPhysicalUnits=0.0)
-        registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=1e-5,
-                                          numberOfIterations=1500,
-                                          maximumNumberOfCorrections=100,
-                                          maximumNumberOfFunctionEvaluations=1000,
-                                          costFunctionConvergenceFactor=1e+7)
+        registration.SetOptimizerAsRegularStepGradientDescent(learningRate=self.learning_rate,
+                                                              minStep=self.step_size,
+                                                              numberOfIterations=self.number_of_iterations,
+                                                              relaxationFactor=self.relaxation_factor,
+                                                              gradientMagnitudeTolerance=1e-4,
+                                                              estimateLearningRate=registration.EachIteration,
+                                                              maximumStepSizeInPhysicalUnits=0.0)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework

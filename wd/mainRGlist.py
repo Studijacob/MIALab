@@ -37,8 +37,8 @@ file = open(path, 'w')
 file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
 file.close
 
-# PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
-PatientIDList = [899885, 188347]
+PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
+# PatientIDList = [899885, 188347]
 
 for patientID in PatientIDList:
 
@@ -52,8 +52,27 @@ for patientID in PatientIDList:
     labels_mni_atlas = sitk.ReadImage('../data/test/'+str(patientID)+'/labels_mniatlas.nii.gz')
     print(" done")
 
+    # the parameters
+    my_number_of_histogram_bins = 200  # int
+    my_learning_rate = 0.10  # float
+    my_step_size = 0.001  # float
+    my_number_of_iterations = 200  # int
+    my_relaxation_factor = 0.5  # int
+    my_shrink_factors = (2, 1, 1)  # [int]
+    my_smoothing_sigmas = (2, 1, 0)  # [float]
+    my_sampling_percentage = 0.2  # float
+
+    print("number of histogram bins:", my_number_of_histogram_bins, "")
+
     print("initialize multimodal transformation ... ", end="")
-    registrationM = R.MultiModalRegistration()
+    registrationM = R.MultiModalRegistration(number_of_histogram_bins=my_number_of_histogram_bins,
+                                            learning_rate=my_learning_rate,
+                                            step_size=my_step_size,
+                                            number_of_iterations=my_number_of_iterations,
+                                            relaxation_factor=my_relaxation_factor,
+                                            shrink_factors=my_shrink_factors,
+                                            smoothing_sigmas=my_smoothing_sigmas,
+                                            sampling_percentage=my_sampling_percentage)
     parametersM = R.MultiModalRegistrationParams(fixed_image)
     print("done")
 
