@@ -59,8 +59,8 @@ for number_of_histogram_bins in histList:
                                   "learning_rate:", learning_rate,
                                   "step_size:", step_size,
                                   "number_of_iterations:", number_of_iterations,
-                                  "shrink_factors", shrink_factors,
-                                  "smoothing_sigmas", smoothing_sigmas, end="")
+                                  "shrink_factors:", shrink_factors,
+                                  "smoothing_sigmas: ", smoothing_sigmas, end="")
                             # Read in the images:
                             fixed_image = sitk.ReadImage('../data/test/' + str(patientID) + '/T1mni.nii.gz')
                             moving_image = sitk.ReadImage('../data/test/' + str(patientID) + '/T1native.nii.gz')
@@ -90,10 +90,9 @@ for number_of_histogram_bins in histList:
                             resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
 
                             # write to result csv
-                            # PatientID; Histogram; LearningRate; StepSize; Iteration; Shrinking; Smoothing;
                             resultsM = [i] + resultsM
                             if 'exec_time_m' in locals(): resultsM.append(exec_time_m)
-                            print("time:", exec_time_m)
+                            print(" time:", exec_time_m)
                             resultsM.append(patientID)
                             resultsM.append(number_of_histogram_bins)
                             resultsM.append(learning_rate)
