@@ -37,8 +37,8 @@ histList = [100, 200, 1000]
 learnRateList = [0.1, 0.2, 0.9]
 stepSizeList = [0.001, 0.01, 0.1]
 iterList = [100, 200, 1000]
-shrinkList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
-smoothList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
+shrinkList = [(2, 1, 1), (4, 2, 1), (8, 4, 1)]
+smoothList = [(2, 1, 1), (4, 2, 1), (8, 4, 1)]
 
 # small job
 # PatientIDList = [899885, 188347]
