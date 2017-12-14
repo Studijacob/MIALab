@@ -56,25 +56,12 @@ for patientID in PatientIDList:
     parametersM = R.MultiModalRegistrationParams(fixed_image)
     print("done")
 
-    print("initialize bspline transformation ... ", end="")
-    registrationB = R.BSplineRegistration()
-    parametersB = R.BSplineRegistrationParams(fixed_image)
-    print("done")
-
     print("calculate affine transformation ...", end="", flush=True)
-
     # Register the moving image and create the corresponding transformation during execute:
     start = time.time()
     registered_multi = registrationM.execute(moving_image, parametersM)
     exec_time_m = time.time() - start
     print(" done")
-    print("calculate bspline transformation ...", end="", flush=True)
-    start = time.time()
-    registered_b = registrationB.execute(registered_multi, parametersB)
-    exec_time_b = time.time() - start
-    print("done")
-
-    print('Total exection time: {}'.format(exec_time_b))
 
     # Evaluate transformation:
     print("evaluating ... ", end="")
@@ -85,30 +72,18 @@ for patientID in PatientIDList:
                                       labels_native_image.GetPixelIDValue())
     resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)
 
-    labels_registredB = sitk.Resample(labels_registredM, registrationB.transform, sitk.sitkLinear, 0.0,
-                                      labels_native_image.GetPixelIDValue())
-    results = evaluator.evaluate(labels_registredB, labels_mni_atlas)
-
     print("done")
     print("Begin: ",resultsA)
     print("affine: ",resultsM)
-    print("bspline:", results)
 
     # write to result csv
     print("write results to file ... ", end="")
     resultsA.append(patientID)
     resultsM.append(patientID)
-    results.append(patientID)
     if 'exec_time_m' in locals(): resultsM.append(exec_time_m)
-    if 'exec_time_b' in locals(): results.append(exec_time_b)
     file = open(path, "a")
     writer = csv.writer(file, delimiter=';')
     writer.writerow(resultsA)
     writer.writerow(resultsM)
-    writer.writerow(results)
     file.close()
     print("done")
-
-# Save the images:
-# sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
-# sitk.WriteImage(registered_b, 'myRegistredB.nii.gz')

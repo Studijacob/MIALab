@@ -54,7 +54,7 @@ class BSplineRegistration(fltr.IFilter):
                  min_number_step_lenght: float = 0.001,
                  relaxation_factor: float = 0.5,
                  cost_function_convergence_factor: float = 1e+7,
-                 sampling_percentage: float = 0.002):
+                 sampling_percentage: float = 0.2):
         """Initializes a new instance of the MultiModalRegistration class.
 
         Args:
@@ -188,7 +188,7 @@ class MultiModalRegistration(fltr.IFilter):
                  relaxation_factor: float=0.5,
                  shrink_factors: [int]=(4, 2, 1),
                  smoothing_sigmas: [float]=(4, 2, 0),
-                 sampling_percentage: float=0.002):
+                 sampling_percentage: float=0.2):
         """Initializes a new instance of the MultiModalRegistration class.
 
         Args:
@@ -241,13 +241,18 @@ class MultiModalRegistration(fltr.IFilter):
 
         # optimizer
         # is required to explore the parameter space of the transform in search of optimal values of the metric
-        registration.SetOptimizerAsRegularStepGradientDescent(learningRate=self.learning_rate,
-                                                              minStep=self.step_size,
-                                                              numberOfIterations=self.number_of_iterations,
-                                                              relaxationFactor=self.relaxation_factor,
-                                                              gradientMagnitudeTolerance=1e-4,
-                                                              estimateLearningRate=registration.EachIteration,
-                                                              maximumStepSizeInPhysicalUnits=0.0)
+        # registration.SetOptimizerAsRegularStepGradientDescent(learningRate=self.learning_rate,
+        #                                                       minStep=self.step_size,
+        #                                                       numberOfIterations=self.number_of_iterations,
+        #                                                       relaxationFactor=self.relaxation_factor,
+        #                                                       gradientMagnitudeTolerance=1e-4,
+        #                                                       estimateLearningRate=registration.EachIteration,
+        #                                                       maximumStepSizeInPhysicalUnits=0.0)
+        registration.SetOptimizerAsLBFGSB(gradientConvergenceTolerance=1e-5,
+                                          numberOfIterations=1500,
+                                          maximumNumberOfCorrections=100,
+                                          maximumNumberOfFunctionEvaluations=1000,
+                                          costFunctionConvergenceFactor=1e+7)
         registration.SetOptimizerScalesFromPhysicalShift()
 
         # setup for the multi-resolution framework
