@@ -31,19 +31,22 @@ file.write(
     'ID; WhiteMatter; GreyMatter; Ventricles; Time; PatientID; Histogram; LearningRate; StepSize; Iteration; Shrinking; Smoothing;' + "\n")
 file.close
 
-PatientIDList = [899885, 188347]
-# PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
-# histList = [100, 200, 1000]
-histList = [100]
+# big job
+PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
+histList = [100, 200, 1000]
 learnRateList = [0.1, 0.2, 0.9]
-# stepSizeList = [0.001, 0.01, 0.1]
-stepSizeList = [0.001]
-# iterList = [100, 200, 1000]
-iterList = [100]
-# shrinkList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
-shrinkList = [(2, 1, 1)]
-# smoothList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
-smoothList = [(2, 1, 1)]
+stepSizeList = [0.001, 0.01, 0.1]
+iterList = [100, 200, 1000]
+shrinkList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
+smoothList = [(2, 1, 1), (4, 2, 1), (4, 2, 0)]
+
+# small job
+# PatientIDList = [899885, 188347]
+# histList = [100]
+# stepSizeList = [0.001]
+# iterList = [100]
+# shrinkList = [(2, 1, 1)]
+# smoothList = [(2, 1, 1)]
 
 for number_of_histogram_bins in histList:
     for learning_rate in learnRateList:
