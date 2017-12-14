@@ -37,7 +37,8 @@ file = open(path, 'w')
 file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
 file.close
 
-PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
+# PatientIDList = [899885, 188347, 189450, 190031, 192540, 196750, 198451, 199655, 201111, 208226]
+PatientIDList = [899885, 188347]
 
 for patientID in PatientIDList:
 
