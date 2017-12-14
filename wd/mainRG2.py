@@ -24,25 +24,14 @@ import mialab.filtering.filter as fltr
 import registration.registration as R
 import registration.evalor as E
 
-
-class RegistrationType(Enum):
-    """Represents the registration transformation type."""
-    AFFINE = 1
-    RIGID = 2
-
-
 # initialize evaluator
 evaluator = E.evalor()
 
-# Testing 3D
-dimensions = 3
-patientID = 899885
-path = './experiment1/results.csv'
-
 # start the csv
-file = open(path, 'w')
-file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
-file.close
+# path = './experiment1/results.csv'
+# file = open(path, 'w')
+# file.write('WhiteMatter; GreyMatter; Ventricles; PatientID; Time;' + "\n")
+# file.close
 
 # Read in the images:
 print("load images ...", end="")
@@ -58,7 +47,6 @@ print(" done")
 
 print("initialize multimodal transformation ... ", end="")
 # Define registration method:
-my_registration_type = RegistrationType.AFFINE
 my_number_of_histogram_bins = 200  # int
 my_learning_rate = 0.10  # float
 my_step_size = 0.001  # float
@@ -120,14 +108,14 @@ print("affine: ",resultsM)
 print("bspline:", results)
 
 # write to result csv
-print("write results to file ... ", end="")
-results.append(patientID)
-if 'exec_time' in locals(): results.append(exec_time)
-file = open(path, "a")
-writer = csv.writer(file, delimiter=';')
-writer.writerow(results)
-file.close()
-print("done")
+# print("write results to file ... ", end="")
+# results.append(patientID)
+# if 'exec_time' in locals(): results.append(exec_time)
+# file = open(path, "a")
+# writer = csv.writer(file, delimiter=';')
+# writer.writerow(results)
+# file.close()
+# print("done")
 
 # Save the images:
 sitk.WriteImage(registered_multi, 'myRegistredM.nii.gz')
