@@ -23,7 +23,8 @@ import registration.evalor as E
 # initialize evaluator
 evaluator = E.evalor()
 
-path = './experiment1/results.csv'
+timestamp = time.strftime("%Y%m%d-%H%M%S")
+path = './experiment1/results'+timestamp+'.csv'
 
 # start the csv
 file = open(path, 'w')
