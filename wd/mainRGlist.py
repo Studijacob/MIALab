@@ -88,7 +88,7 @@ for number_of_histogram_bins in histList:
 
                             # Evaluate transformation:
                             # Apply the transformation to the native lables image:
-                            labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, sitk.sitkLinear,
+                            labels_registredM = sitk.Resample(labels_native_image, registrationM.transform, sitk.sitkNearestNeighbor,
                                                               0.0,
                                                               labels_native_image.GetPixelIDValue())
                             resultsM = evaluator.evaluate(labels_registredM, labels_mni_atlas)

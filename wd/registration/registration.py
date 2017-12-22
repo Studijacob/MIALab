@@ -237,7 +237,7 @@ class MultiModalRegistration(fltr.IFilter):
 
         # interpolator
         # will evaluate the intensities of the moving image at non-rigid positions
-        registration.SetInterpolator(sitk.sitkLinear)
+        registration.SetInterpolator(sitk.sitkNearestNeighbor)
 
         # optimizer
         # is required to explore the parameter space of the transform in search of optimal values of the metric
